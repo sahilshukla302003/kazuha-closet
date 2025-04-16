@@ -37,9 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-     'tailwind',
-     'home',
-     'theme'
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -131,5 +128,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'theme' / 'static',
+    BASE_DIR / "home" / "static",   # Static files inside your app
 ]

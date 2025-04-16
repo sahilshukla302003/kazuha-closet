@@ -6,7 +6,7 @@
     "build": "npm run build:clean && npm run build:tailwind",
     "build:clean": "rimraf ../static/css/dist",
     "build:tailwind": "cross-env NODE_ENV=production postcss ./src/styles.css -o ../static/css/dist/styles.css --minify",
-"dev": "npx tailwindcss -i ./theme/static_src/src/styles.css -o ./theme/static/styles.css --watch"
+    "dev": "npx tailwindcss -i ./theme/static_src/src/styles.css -o ./theme/static/styles.css --watch"
 
   },
   "keywords": [],
