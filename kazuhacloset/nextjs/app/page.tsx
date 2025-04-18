@@ -151,8 +151,6 @@ export default function Home() {
                   src={product.gif}
                   alt={product.name}
                 />
-
-                
                 {/* Text content centered */}
                 <div className="text-center">
                   <h2 className="text-white text-xl font-bold mb-1">{product.name}</h2>
