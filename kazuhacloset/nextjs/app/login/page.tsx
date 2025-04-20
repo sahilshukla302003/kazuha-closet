@@ -1,8 +1,11 @@
 import React from 'react';
-import './App.css';
+import Link from 'next/link';
 
-export default function App() {
+export default function Page() {
   return (
+
+
+   
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/background.jpg')" }}
@@ -11,10 +14,8 @@ export default function App() {
                       shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] 
                       hover:border-white transition-all duration-500 ease-in-out transform hover:scale-105 w-[90%] max-w-md text-white">
         
-        {/* Login Header */}
         <h2 className="text-center text-3xl font-bold mb-6">Login</h2>
 
-        {/* Email Field */}
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
           <input
@@ -25,7 +26,6 @@ export default function App() {
           />
         </div>
 
-        {/* Password Field */}
         <div className="mb-6">
           <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
           <input
@@ -36,12 +36,19 @@ export default function App() {
           />
         </div>
 
-        {/* Login Button */}
         <button
           className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300"
         >
-          Login  Hello
+          Login
         </button>
+
+        {/* Register link */}
+        <p className="mt-4 text-center text-sm text-white">
+          Not registered?{' '}
+          <Link href="/register" className="text-yellow-400 hover:underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );
