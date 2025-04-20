@@ -1,31 +1,36 @@
 // app/layout.tsx
-import './globals.css';  // Import global CSS
-import { Luckiest_Guy } from 'next/font/google';  // Import Google font
-import type { Metadata } from 'next';  // Import Metadata type from Next.js
+import './globals.css';
+import { Luckiest_Guy } from 'next/font/google';
+import 'aos/dist/aos.css';
 
-// Apply the Luckiest_Guy font to the layout
+import type { Metadata } from 'next';
+import Sidebar from './components/Sidebar'; // 👈 import Sidebar
+
 const luckiest = Luckiest_Guy({
-  subsets: ['latin'],  // Specify the font subsets
-  weight: '400',  // Set the weight of the font
+  subsets: ['latin'],
+  weight: '400',
 });
 
-// Define the metadata for the page, including the title
 export const metadata: Metadata = {
-  title: 'Naruto T-Shirt Landing',  // Set the page title
+  title: 'Naruto T-Shirt Landing',
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;  // Define the type for children prop
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning={true} data-qb-installed="true">
-      <head>
-        {/* You might want to add meta tags or link elements here, like favicon or charset */}
-      </head>
-      <body className={luckiest.className}>
-        {children}
+    <html lang="en" suppressHydrationWarning={true}>
+      <head />
+      <body className={`${luckiest.className} bg-[#1b1b1d]`}>
+        {/* Global Sidebar */}
+        <Sidebar />
+
+        {/* Page Content */}
+        <main className="relative min-h-screen overflow-x-hidden">
+          {children}
+        </main>
       </body>
     </html>
   );
