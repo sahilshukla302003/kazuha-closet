@@ -1,5 +1,7 @@
 'use client';
 
+import Link from "next/link";
+
 export default function Navbar() {
   return (
     <div className="flex justify-between items-center text-white mb-10">
@@ -34,15 +36,17 @@ export default function Navbar() {
             />
           </svg>
         </div>
-        <div className="transition-transform transform hover:scale-125 hover:text-blue-400 cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 14c-3.314 0-6 2.239-6 5v1h12v-1c0-2.761-2.686-5-6-5zM12 12a4 4 0 100-8 4 4 0 000 8z"
-            />
-          </svg>
-        </div>
+        <Link href={"/login"}>
+              <div className="transition-transform transform hover:scale-125 hover:text-blue-400 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 14c-3.314 0-6 2.239-6 5v1h12v-1c0-2.761-2.686-5-6-5zM12 12a4 4 0 100-8 4 4 0 000 8z"
+                  />
+                </svg>
+              </div>
+            </Link>
         <div className="transition-transform transform hover:scale-125 hover:text-red-400 cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
             <path
