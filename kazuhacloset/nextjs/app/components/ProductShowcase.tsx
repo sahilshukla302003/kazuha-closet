@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import LazyVideo from "./LazyVideo"; // Import LazyVideo component
+import React, { useState, useRef, useEffect } from "react";
 
 type Product = {
   id: number;
@@ -42,6 +41,29 @@ const ProductShowcase = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const observerRef = useRef<(HTMLVideoElement | null)[]>([]);
 
+  // Optional: use IntersectionObserver to preload
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const videoElement = entry.target as HTMLVideoElement;
+            videoElement.load(); // Preload when visible
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observerRef.current.forEach((video) => {
+      if (video) {
+        observer.observe(video);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
       className="relative w-full h-[90vh] flex items-center justify-center"
@@ -63,9 +85,23 @@ const ProductShowcase = () => {
           >
             <div className="bg-black/20 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-500 ease-in-out transform hover:scale-105 relative">
               {product.type === "video" ? (
-                <LazyVideo
+                <video
+                  ref={(el) => {
+                    if (el && !observerRef.current.includes(el)) {
+                      observerRef.current.push(el);
+                    }
+                  }}
                   src={product.video}
-                  alt={product.name}
+                  muted
+                  loop
+                  playsInline
+                  preload="none"
+                  className="w-full h-[320px] object-contain rounded-lg"
+                  onMouseEnter={(e) => e.currentTarget.play()}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
+                  }}
                 />
               ) : (
                 <img
@@ -75,9 +111,13 @@ const ProductShowcase = () => {
                 />
               )}
 
-              <div className="text-center">
-                <h2 className="text-white text-xl font-bold mb-1">{product.name}</h2>
-                <p className="text-yellow-400 text-lg font-semibold">{product.price}</p>
+              <div className="text-center mt-2">
+                <h2 className="text-white text-xl font-bold mb-1">
+                  {product.name}
+                </h2>
+                <p className="text-yellow-400 text-lg font-semibold">
+                  {product.price}
+                </p>
               </div>
               <button className="w-full mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black text-lg font-semibold rounded-full transition-transform duration-300 hover:scale-105 shadow-md">
                 Add to Cart
@@ -107,9 +147,13 @@ const ProductShowcase = () => {
               {selectedProduct.price}
             </p>
             {selectedProduct.type === "video" ? (
-              <LazyVideo
+              <video
                 src={selectedProduct.video}
-                alt={selectedProduct.name}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto object-contain rounded-xl shadow-md"
               />
             ) : (
               <img
