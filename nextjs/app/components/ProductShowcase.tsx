@@ -97,11 +97,19 @@ const ProductShowcase = () => {
                   playsInline
                   preload="none"
                   className="w-full h-[320px] object-contain rounded-lg"
-                  onMouseEnter={(e) => e.currentTarget.play()}
+                  onMouseEnter={(e) => {
+                    const playPromise = e.currentTarget.play();
+                    if (playPromise !== undefined) {
+                      playPromise.catch((error) => {
+                        console.warn("Video play interrupted", error);
+                      });
+                    }
+                  }}
                   onMouseLeave={(e) => {
                     e.currentTarget.pause();
                     e.currentTarget.currentTime = 0;
                   }}
+                  
                 />
               ) : (
                 <img
