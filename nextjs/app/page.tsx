@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import PromoCard from './components/PromoCard';
 import ProductShowcase from './components/ProductShowcase';
 import AboutSection from './components/AboutSection';
+import ContactSection from './components/ContactSection';
 
 export default function Home() {
   return (
@@ -22,13 +23,12 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <AboutSection />
+      <section id="about" className="flex justify-center items-center h-screen">
+        <AboutSection />
+      </section>
 
       {/* Contact Section */}
-      <section id="contact" className="h-screen p-10 text-white">
-        <h2 className="text-3xl font-bold mb-4">Contact</h2>
-        <p>This is the Contact section. You can add a form or contact info here.</p>
-      </section>
+      <ContactSection />
     </main>
   );
 }
