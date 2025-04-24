@@ -1,11 +1,30 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import API from '@/lib/api';
 
-export default function Page() {
+export default function LoginPage() {
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleLogin = async () => {
+    try {
+      const res = await API.post('/login/', form);
+      alert('Login successful!');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
+      alert(errorMessage);
+    }
+  };
+
   return (
-
-
-   
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/background.jpg')" }}
@@ -21,6 +40,8 @@ export default function Page() {
           <input
             type="email"
             id="email"
+            value={form.email}
+            onChange={handleChange}
             placeholder="Enter your email"
             className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
           />
@@ -31,12 +52,15 @@ export default function Page() {
           <input
             type="password"
             id="password"
+            value={form.password}
+            onChange={handleChange}
             placeholder="Enter your password"
             className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
           />
         </div>
 
         <button
+          onClick={handleLogin}
           className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300"
         >
           Login

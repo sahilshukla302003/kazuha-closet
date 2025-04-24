@@ -7,7 +7,6 @@
     "build:clean": "rimraf ../static/css/dist",
     "build:tailwind": "cross-env NODE_ENV=production postcss ./src/styles.css -o ../static/css/dist/styles.css --minify",
     "dev": "npx tailwindcss -i ./theme/static_src/src/styles.css -o ./theme/static/styles.css --watch"
-
   },
   "keywords": [],
   "author": "",
@@ -28,6 +27,7 @@
     "ansi-regex": "^6.1.0",
     "ansi-styles": "^6.2.1",
     "anymatch": "^3.1.3",
+    "axios": "^1.8.4",
     "balanced-match": "^1.0.2",
     "binary-extensions": "^2.3.0",
     "brace-expansion": "^2.0.1",
