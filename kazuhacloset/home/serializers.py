@@ -1,15 +1,11 @@
 from rest_framework import serializers
-from .models import User
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'phone', 'password']
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+class RegisterSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=15)
+    password = serializers.CharField(write_only=True)  # We don't want to return the password
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
