@@ -8,7 +8,6 @@ yarn-error.log*
 *.pyc
 __pycache__/
 db.sqlite3
-.env
 
 # VSCode settings
 .vscode/
