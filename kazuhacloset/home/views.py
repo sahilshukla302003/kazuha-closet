@@ -38,7 +38,12 @@ class LoginView(APIView):
 
             user = users_collection.find_one({"email": email})
 
-            if user and check_password(password, user['password']):  # ✨ Checking hashed password
-                return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+            if user and check_password(password, user['password']):
+                # ✅ Return first_name for profile icon
+                return Response({
+                    "message": "Login successful",
+                    "first_name": user.get("first_name", "")
+                }, status=status.HTTP_200_OK)
+
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
