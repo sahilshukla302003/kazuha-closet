@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import API from '@/lib/api';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
@@ -20,13 +22,14 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     try {
       const res = await API.post('/register/', form);
+      localStorage.setItem('first_name', form.first_name); // Save first name for profile icon
       alert('Registration successful!');
+      router.push('/'); // Redirect to home
     } catch (err: any) {
-      // Safe error handling
       const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
       alert(errorMessage);
     }
-  };  
+  };
 
   return (
     <div

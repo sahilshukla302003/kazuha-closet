@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import API from '@/lib/api';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -14,15 +16,37 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-  const handleLogin = async () => {
-    try {
-      const res = await API.post('/login/', form);
-      alert('Login successful!');
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-      alert(errorMessage);
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      if (!form.email || !form.password) {
+        alert('Please fill in both email and password');
+        return;
+      }
+    
+      try {
+        const res = await API.post('/login/', form);
+        console.log('Login Response:', res.data); // ✅ Add this to inspect the actual data
+    
+        // Choose the correct key: first_name or name
+        let firstName = res.data?.first_name;
+    
+        // If API sends full name as "name", we split and use the first word
+        if (!firstName && res.data?.name) {
+          firstName = res.data.name.split(' ')[0];
+        }
+    
+        const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : 'U';
+    
+        localStorage.setItem('first_name', firstLetter); // Only save the initial
+        alert('Login successful!');
+        router.push('/');
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
+        alert(errorMessage);
+      }
+    };
+    
 
   return (
     <div
@@ -35,38 +59,41 @@ export default function LoginPage() {
         
         <h2 className="text-center text-3xl font-bold mb-6">Login</h2>
 
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
+              required
+            />
+          </div>
 
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
-          />
-        </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
+              required
+            />
+          </div>
 
-        <button
-          onClick={handleLogin}
-          className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300"
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300"
+          >
+            Login
+          </button>
+        </form>
 
-        {/* Register link */}
         <p className="mt-4 text-center text-sm text-white">
           Not registered?{' '}
           <Link href="/register" className="text-yellow-400 hover:underline">
