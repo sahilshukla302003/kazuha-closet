@@ -16,39 +16,37 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!form.email || !form.password) {
-      alert('Please fill in both email and password');
-      return;
-    }
-
-    try {
-      const res = await API.post('/login/', form);
-      console.log('Login Response:', res.data); // For debugging
-
-      const userId = res.data._id; // ✅ Make sure backend returns this
-      let firstName = res.data?.first_name;
-
-      // If API sends full name as "name", we split and use the first word
-      if (!firstName && res.data?.name) {
-        firstName = res.data.name.split(' ')[0];
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      if (!form.email || !form.password) {
+        alert('Please fill in both email and password');
+        return;
       }
-
-      const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : 'U';
-
-      // ✅ Store userId and initial
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('first_name', firstLetter);
-
-      alert('Login successful!');
-      router.push('/');
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-      alert(errorMessage);
-    }
-  };
+    
+      try {
+        const res = await API.post('/login/', form);
+        console.log('Login Response:', res.data); // ✅ Add this to inspect the actual data
+    
+        // Choose the correct key: first_name or name
+        let firstName = res.data?.first_name;
+    
+        // If API sends full name as "name", we split and use the first word
+        if (!firstName && res.data?.name) {
+          firstName = res.data.name.split(' ')[0];
+        }
+    
+        const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : 'U';
+    
+        localStorage.setItem('first_name', firstLetter); // Only save the initial
+        alert('Login successful!');
+        router.push('/');
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
+        alert(errorMessage);
+      }
+    };
+    
 
   return (
     <div
