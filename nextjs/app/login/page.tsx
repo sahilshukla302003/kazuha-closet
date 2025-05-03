@@ -16,37 +16,32 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-    
-      if (!form.email || !form.password) {
-        alert('Please fill in both email and password');
-        return;
-      }
-    
-      try {
-        const res = await API.post('/login/', form);
-        console.log('Login Response:', res.data); // ✅ Add this to inspect the actual data
-    
-        // Choose the correct key: first_name or name
-        let firstName = res.data?.first_name;
-    
-        // If API sends full name as "name", we split and use the first word
-        if (!firstName && res.data?.name) {
-          firstName = res.data.name.split(' ')[0];
-        }
-    
-        const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : 'U';
-    
-        localStorage.setItem('first_name', firstLetter); // Only save the initial
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.email || !form.password) {
+      alert('Please fill in both email and password');
+      return;
+    }
+
+    try {
+      const res = await API.post('/login/', form);
+      const { access, first_name } = res.data;
+
+      if (access) {
+        localStorage.setItem('token', access);
+        const firstLetter = first_name ? first_name.charAt(0).toUpperCase() : 'U';
+        localStorage.setItem('first_name', firstLetter);
         alert('Login successful!');
-        router.push('/');
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-        alert(errorMessage);
+        router.push('/'); // Redirect to home
+      } else {
+        alert('Token not received');
       }
-    };
-    
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
+      alert(errorMessage);
+    }
+  };
 
   return (
     <div
@@ -56,7 +51,7 @@ export default function LoginPage() {
       <div className="bg-black/30 backdrop-blur-md border border-transparent p-8 rounded-2xl 
                       shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] 
                       hover:border-white transition-all duration-500 ease-in-out transform hover:scale-105 w-[90%] max-w-md text-white">
-        
+
         <h2 className="text-center text-3xl font-bold mb-6">Login</h2>
 
         <form onSubmit={handleSubmit}>
