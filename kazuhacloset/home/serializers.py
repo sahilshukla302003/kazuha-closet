@@ -5,7 +5,7 @@ class RegisterSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=255)
     email = serializers.EmailField()
     phone = serializers.CharField(max_length=15)
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)  # We don't want to return the password
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
