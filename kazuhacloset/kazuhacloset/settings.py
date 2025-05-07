@@ -21,7 +21,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'rest_framework',
-    'rest_framework_simplejwt',
     'home',
     'corsheaders',
     'django.contrib.admin',
@@ -31,12 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-}
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -71,7 +64,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kazuhacloset.wsgi.application'
 
+# Authentication settings for MongoDB (you can ignore this if not using Django's ORM)
+# AUTH_USER_MODEL = 'home.User'
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

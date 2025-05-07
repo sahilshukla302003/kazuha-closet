@@ -14,45 +14,20 @@ export default function RegisterPage() {
     phone: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false); // Loading state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-  const validateForm = () => {
-    // Add more validations if needed
-    if (!form.first_name || !form.email || !form.password) {
-      alert('Please fill in required fields.');
-      return false;
-    }
-    // Email format validation (simple check)
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(form.email)) {
-      alert('Please enter a valid email address.');
-      return false;
-    }
-    return true;
-  };
-
   const handleRegister = async () => {
-    if (!validateForm()) return;
-
-    setLoading(true); // Start loading
-
     try {
       const res = await API.post('/register/', form);
+      localStorage.setItem('first_name', form.first_name); // Save first name for profile icon
       alert('Registration successful!');
-      
-      // Optionally auto-login or redirect
-      localStorage.setItem('first_name', form.first_name.charAt(0).toUpperCase());
-
       router.push('/'); // Redirect to home
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-      alert(`Error: ${errorMessage}`);
-    } finally {
-      setLoading(false); // Stop loading
+      alert(errorMessage);
     }
   };
 
@@ -106,7 +81,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Phone */}
+        {/* Phone Number */}
         <div className="mb-6">
           <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone Number</label>
           <input
@@ -132,13 +107,11 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Register Button */}
         <button
           onClick={handleRegister}
           className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300"
-          disabled={loading} // Disable when loading
         >
-          {loading ? 'Registering...' : 'Register'}
+          Register
         </button>
 
         {/* Login link */}
