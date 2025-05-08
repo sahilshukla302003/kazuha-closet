@@ -44,9 +44,8 @@ export default function Navbar() {
 
   return (
     <div
-      className={`fixed top-0 left-0 z-50 w-full px-10 transition-all duration-500 ${
-        mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
-      } ${scrolled ? 'py-2 backdrop-blur-md bg-black/80 shadow-md' : 'py-4 backdrop-blur-lg bg-black/60 shadow-lg'}`}
+      className={`fixed top-0 left-0 z-50 w-full px-10 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
+        } ${scrolled ? 'py-2 backdrop-blur-md bg-black/80 shadow-md' : 'py-4 backdrop-blur-lg bg-black/60 shadow-lg'}`}
     >
       <div className="flex justify-between items-center text-white">
         {/* Left - Logo & Brand */}
