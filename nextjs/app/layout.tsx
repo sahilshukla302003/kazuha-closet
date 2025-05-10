@@ -1,4 +1,5 @@
 // app/layout.tsx
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 import './globals.css';
 import { Luckiest_Guy } from 'next/font/google';
 import 'aos/dist/aos.css';
