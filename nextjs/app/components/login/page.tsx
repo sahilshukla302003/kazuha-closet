@@ -96,7 +96,7 @@ export default function LoginPage() {
 
         <p className="mt-4 text-center text-sm text-white">
           Not registered?{' '}
-          <Link href="/register" className="text-yellow-400 hover:underline">
+          <Link href="/components/register" className="text-yellow-400 hover:underline">
             Register here
           </Link>
         </p>

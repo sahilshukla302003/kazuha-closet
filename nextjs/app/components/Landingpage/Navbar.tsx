@@ -39,7 +39,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/page.tsx';
   };
 
   return (
@@ -74,20 +74,21 @@ export default function Navbar() {
           />
         </div>
 
-        {/* Right - Icons */}
         <div className="flex items-center justify-center space-x-8 text-white text-2xl relative">
           {/* Cart */}
-          <div className="hover:scale-125 transition-transform duration-300 hover:text-yellow-400 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.35 2.7a1 1 0 00.9 1.3h12.3M16 16a1 1 0 11-2 0 1 1 0 012 0zm-8 0a1 1 0 11-2 0 1 1 0 012 0z"
-              />
-            </svg>
-          </div>
+          <Link href="/components/cart">
+            <div className="hover:scale-125 transition-transform duration-300 hover:text-yellow-400 cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.35 2.7a1 1 0 00.9 1.3h12.3M16 16a1 1 0 11-2 0 1 1 0 012 0zm-8 0a1 1 0 11-2 0 1 1 0 012 0z"
+                />
+              </svg>
+            </div>
+          </Link>
 
-          {/* Profile */}
+          {/* Profile or Login */}
           {firstLetter ? (
             <div className="relative" ref={dropdownRef}>
               <div
@@ -98,7 +99,7 @@ export default function Navbar() {
               </div>
 
               {dropdownOpen && (
-                <div className="absolute top-12 right-0 w-44 bg-white text-black rounded-xl shadow-xl py-3 z-50 ">
+                <div className="absolute top-12 right-0 w-44 bg-white text-black rounded-xl shadow-xl py-3 z-50">
                   <Link
                     href="/profile"
                     className="flex items-center gap-3 px-4 py-2 text-sm font-medium hover:bg-gray-100 transition rounded-md"
@@ -145,7 +146,7 @@ export default function Navbar() {
             </div>
           ) : (
             <Link
-              href="/login"
+              href="/components/login"
               className="hover:scale-125 transition-transform duration-300 hover:text-blue-400 cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" stroke="currentColor">
