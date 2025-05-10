@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type Product = {
   id: number;
@@ -40,15 +41,15 @@ const products: Product[] = [
 const ProductShowcase = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const observerRef = useRef<(HTMLVideoElement | null)[]>([]);
+  const router = useRouter();
 
-  // Optional: use IntersectionObserver to preload
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const videoElement = entry.target as HTMLVideoElement;
-            videoElement.load(); // Preload when visible
+            videoElement.load();
           }
         });
       },
@@ -56,9 +57,7 @@ const ProductShowcase = () => {
     );
 
     observerRef.current.forEach((video) => {
-      if (video) {
-        observer.observe(video);
-      }
+      if (video) observer.observe(video);
     });
 
     return () => observer.disconnect();
@@ -100,16 +99,15 @@ const ProductShowcase = () => {
                   onMouseEnter={(e) => {
                     const playPromise = e.currentTarget.play();
                     if (playPromise !== undefined) {
-                      playPromise.catch((error) => {
-                        console.warn("Video play interrupted", error);
-                      });
+                      playPromise.catch((error) =>
+                        console.warn("Video play interrupted", error)
+                      );
                     }
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.pause();
                     e.currentTarget.currentTime = 0;
                   }}
-                  
                 />
               ) : (
                 <img
@@ -118,7 +116,6 @@ const ProductShowcase = () => {
                   alt={product.name}
                 />
               )}
-
               <div className="text-center mt-2">
                 <h2 className="text-white text-xl font-bold mb-1">
                   {product.name}
@@ -135,7 +132,17 @@ const ProductShowcase = () => {
         ))}
       </div>
 
-      {/* Quick View Modal */}
+      {/* Navigate to all products */}
+      <div className="absolute top-10 right-10">
+        <button
+          onClick={() => router.push("/All_Products_page")}
+          className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
+        >
+          View All Products
+        </button>
+      </div>
+
+      {/* Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-[90%] md:w-[500px] p-8 rounded-2xl shadow-2xl relative border border-yellow-400">
