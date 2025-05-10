@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 
 export default function Navbar() {
@@ -44,8 +45,9 @@ export default function Navbar() {
 
   return (
     <div
-      className={`fixed top-0 left-0 z-50 w-full px-10 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
-        } ${scrolled ? 'py-2 backdrop-blur-md bg-black/80 shadow-md' : 'py-4 backdrop-blur-lg bg-black/60 shadow-lg'}`}
+      className={`fixed top-0 left-0 z-50 w-full px-10 transition-all duration-500 ${
+        mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
+      } ${scrolled ? 'py-2 backdrop-blur-md bg-black/80 shadow-md' : 'py-4 backdrop-blur-lg bg-black/60 shadow-lg'}`}
     >
       <div className="flex justify-between items-center text-white">
         {/* Left - Logo & Brand */}
@@ -53,7 +55,7 @@ export default function Navbar() {
           href="/"
           className="flex items-center space-x-4 hover:scale-105 transition-transform duration-300 cursor-pointer"
         >
-          <img src="/logo.png" alt="Logo" className="w-12 h-12 rounded-full" />
+          <Image src="/logo.png" alt="Logo" width={48} height={48} className="rounded-full" />
           <div className="text-lg leading-5 font-semibold tracking-wide">
             KAZUHA <br /> CLOSET
           </div>

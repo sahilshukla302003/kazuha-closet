@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import React from 'react';
 import Navbar from '../Landingpage/Navbar';
 import { Poppins } from 'next/font/google';
+import Image from 'next/image';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -16,24 +17,27 @@ export default function CartPage() {
     price: number;
     quantity: number;
     image: string;
-  }[] = []; // Leave this empty to show empty cart animation
+  }[] = []; // Leave empty to show empty cart animation
 
   const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <main className="bg-black text-white min-h-screen px-6 py-8 flex flex-col items-center justify-start">
-      {/* Navbar uses default font */}
       <Navbar />
 
-      {/* Cart content uses Poppins */}
       <div className={`${poppins.className} w-full flex flex-col items-center`}>
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center text-center mt-32">
-            <img
-              src="/videos/emptycart.gif"
-              alt="Empty Cart"
-              className="w-40 max-w-xs rounded-xl shadow-xl"
-            />
+            <div className="relative w-40 h-40">
+              <Image
+                src="/videos/emptycart.gif"
+                alt="Empty Cart"
+                layout="fill"
+                objectFit="contain"
+                className="rounded-xl shadow-xl"
+                priority
+              />
+            </div>
             <h1 className="text-2xl font-bold mt-6 drop-shadow-[1px_1px_3px_rgba(0,0,0,0.6)]">
               Your Cart is Feeling Lonely
             </h1>
@@ -49,7 +53,15 @@ export default function CartPage() {
 
             {cartItems.map((item) => (
               <div key={item.id} className="flex items-center justify-between mb-6">
-                <img src={item.image} alt={item.name} className="w-32 rounded-xl shadow-lg" />
+                <div className="relative w-32 h-32">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-xl shadow-lg"
+                  />
+                </div>
                 <div className="flex-1 ml-6">
                   <h2 className="text-2xl font-bold">{item.name}</h2>
                   <p className="text-gray-300">Qty: {item.quantity}</p>

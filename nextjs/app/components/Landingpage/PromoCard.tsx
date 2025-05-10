@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
+import Image from "next/image";
 
 const PromoCard: React.FC = () => {
   return (
-    <div className="mb-44"> {/* Increased space below the PromoCard */}
+    <div className="mb-44">
       <div className="bg-[#888888] rounded-3xl flex justify-between items-center px-[50px] py-8 max-w-[1000px] mx-auto mt-36 relative overflow-visible shadow-xl transition-all duration-300 border border-transparent hover:border-white hover:shadow-[0_0_25px_rgba(255,255,255,0.6)]">
         <div className="text-white font-extrabold space-y-6 z-10">
           <h2 className="text-6xl drop-shadow-2xl glow-text animate-fadeIn">NARUTO</h2>
@@ -13,16 +15,24 @@ const PromoCard: React.FC = () => {
         </div>
 
         <div className="relative z-20 ml-32 w-[500px] h-[380px] overflow-visible -mt-20">
-          <img
-            src="/Kurama-Tshirt.png"
-            alt="Kurama T-Shirt"
-            className="absolute top-[-0px] left-44 z-10 w-[400px] h-[400px] object-contain animate-slideUpFade img-hover-scale"
-          />
-          <img
-            src="/Naruto-Tshirt.png"
-            alt="Naruto Uzumaki T-Shirt"
-            className="absolute top-[-10px] left-8 z-20 w-[450px] h-[450px] object-contain animate-slideUpFade img-hover-scale"
-          />
+          <div className="absolute top-0 left-44 z-10 w-[400px] h-[400px] animate-slideUpFade img-hover-scale">
+            <Image
+              src="/Kurama-Tshirt.png"
+              alt="Kurama T-Shirt"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+          <div className="absolute top-[-10px] left-8 z-20 w-[450px] h-[450px] animate-slideUpFade img-hover-scale">
+            <Image
+              src="/Naruto-Tshirt.png"
+              alt="Naruto Uzumaki T-Shirt"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import Navbar from "../components/Landingpage/Navbar";
+import Navbar from "../Landingpage/Navbar";
+import Image from "next/image";
 
 type Product = {
     id: number;
@@ -8,6 +9,7 @@ type Product = {
     price: string;
     type: "video" | "image";
     video: string;
+    thumbnail?: string;
     description: string;
 };
 
@@ -38,27 +40,30 @@ const products: Product[] = [
     },
     {
         id: 4,
-        name: "Sasuke Tee",
-        price: "₹699",
-        type: "video",
-        video: "/videos/toji.mp4",
-        description: "Cool and stylish Sasuke Tee with a bold ninja design.",
+        name: "Goku Tee",
+        price: "₹499",
+        type: "image",
+        video: "",
+        thumbnail: "/images/goku.png",
+        description: "Classic Goku design printed on premium quality cotton.",
     },
     {
         id: 5,
-        name: "Sasuke Tee",
-        price: "₹699",
-        type: "video",
-        video: "/videos/toji.mp4",
-        description: "Cool and stylish Sasuke Tee with a bold ninja design.",
+        name: "Zoro Tee",
+        price: "₹549",
+        type: "image",
+        video: "",
+        thumbnail: "/images/zoro.png",
+        description: "Green-themed Zoro T-shirt, perfect for anime fans.",
     },
     {
         id: 6,
-        name: "Sasuke Tee",
-        price: "₹699",
-        type: "video",
-        video: "/videos/toji.mp4",
-        description: "Cool and stylish Sasuke Tee with a bold ninja design.",
+        name: "Gojo Tee",
+        price: "₹799",
+        type: "image",
+        video: "",
+        thumbnail: "/images/gojo.png",
+        description: "Stylish Gojo Satoru Tee with high-detail artwork.",
     },
 ];
 
@@ -69,7 +74,7 @@ const AllProductsPage = () => {
             <h1 className="text-4xl font-bold text-center mb-10 text-yellow-400">
                 All Products
             </h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-15 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
                 {products.map((product) => (
                     <div
                         key={product.id}
@@ -81,7 +86,6 @@ const AllProductsPage = () => {
                                 muted
                                 loop
                                 playsInline
-                                // preload="none"
                                 className="w-full h-[320px] object-contain rounded-lg"
                                 onMouseEnter={(e) => {
                                     const playPromise = e.currentTarget.play();
@@ -95,14 +99,17 @@ const AllProductsPage = () => {
                                     e.currentTarget.pause();
                                     e.currentTarget.currentTime = 0;
                                 }}
-
                             />
                         ) : (
-                            <img
-                                className="rounded-xl w-full h-[320px] object-cover mb-4"
-                                src={product.video}
-                                alt={product.name}
-                            />
+                            <div className="relative w-full h-[320px] mb-4 rounded-lg overflow-hidden">
+                                <Image
+                                    src={product.thumbnail || "/images/default.png"}
+                                    alt={product.name}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="rounded-lg"
+                                />
+                            </div>
                         )}
                         <div className="text-center mt-2">
                             <h2 className="text-white text-xl font-bold mb-1">

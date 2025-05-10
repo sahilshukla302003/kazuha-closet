@@ -1,6 +1,6 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import Link from "next/link";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,28 +35,26 @@ export default function Sidebar() {
       </div>
 
       {isOpen && (
-  <div
-    id="sidebar"
-    className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-32 py-4 rounded-xl shadow-xl z-40"
-  >
-    <ul className="space-y-8 text-sm px-4">
-      <a href="#home">
-        <li className="hover:text-yellow-400 cursor-pointer py-1">Home</li>
-      </a>
-      <a href="#products">
-        <li className="hover:text-yellow-400 cursor-pointer py-1">Products</li>
-      </a>
-      <a href="#about">
-        <li className="hover:text-yellow-400 cursor-pointer py-1">About</li>
-      </a>
-      <a href="#contact">
-        <li className="hover:text-yellow-400 cursor-pointer py-1">Contact</li>
-      </a>
-    </ul>
-  </div>
-)}
-
-
+        <div
+          id="sidebar"
+          className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-32 py-4 rounded-xl shadow-xl z-40"
+        >
+          <ul className="space-y-8 text-sm px-4">
+            <li className="hover:text-yellow-400 cursor-pointer py-1">
+              <a href="#home">Home</a>
+            </li>
+            <li className="hover:text-yellow-400 cursor-pointer py-1">
+              <a href="#products">Products</a>
+            </li>
+            <li className="hover:text-yellow-400 cursor-pointer py-1">
+              <a href="#about">About</a>
+            </li>
+            <li className="hover:text-yellow-400 cursor-pointer py-1">
+              <a href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
+      )}
     </>
   );
 }

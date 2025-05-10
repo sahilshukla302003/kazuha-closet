@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer, LoginSerializer
-from django.contrib.auth.hashers import make_password, check_password  # ✨ Added this
+from django.contrib.auth.hashers import make_password, check_password  
 
 # Load environment variables from .env
 load_dotenv()

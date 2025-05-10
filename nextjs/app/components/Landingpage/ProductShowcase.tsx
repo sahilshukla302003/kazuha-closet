@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type Product = {
   id: number;
@@ -110,10 +111,13 @@ const ProductShowcase = () => {
                   }}
                 />
               ) : (
-                <img
-                  className="rounded-xl w-full h-[320px] object-cover mb-4"
+                <Image
+                  className="rounded-xl mb-4"
                   src={product.video}
                   alt={product.name}
+                  width={360}
+                  height={320}
+                  style={{ width: "100%", height: "320px", objectFit: "cover" }}
                 />
               )}
               <div className="text-center mt-2">
@@ -135,7 +139,7 @@ const ProductShowcase = () => {
       {/* Navigate to all products */}
       <div className="absolute top-10 right-10">
         <button
-          onClick={() => router.push("/All_Products_page")}
+          onClick={() => router.push("/components/All_Products_page")}
           className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
         >
           View All Products
@@ -171,10 +175,13 @@ const ProductShowcase = () => {
                 className="w-full h-auto object-contain rounded-xl shadow-md"
               />
             ) : (
-              <img
-                className="rounded-xl w-full object-cover shadow-md mb-4"
+              <Image
+                className="rounded-xl shadow-md mb-4"
                 src={selectedProduct.video}
                 alt={selectedProduct.name}
+                width={500}
+                height={400}
+                style={{ width: "100%", height: "auto", objectFit: "cover" }}
               />
             )}
           </div>
