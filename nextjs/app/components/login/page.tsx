@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import API from '@/lib/api';
+import { userLogin } from '@/utils/api/userUtils';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,37 +16,28 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-    
-      if (!form.email || !form.password) {
-        alert('Please fill in both email and password');
-        return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.email || !form.password) {
+      alert('Please fill in both email and password');
+      return;
+    }
+
+    try {
+      const res = await userLogin(form);
+
+      if (res) {
+      localStorage.setItem('userid', res.id);
+      router.push('/');
+      } else {
+        alert('Login failed');
       }
-    
-      try {
-        const res = await API.post('/login/', form);
-        console.log('Login Response:', res.data); // ✅ Add this to inspect the actual data
-    
-        // Choose the correct key: first_name or name
-        let firstName = res.data?.first_name;
-    
-        // If API sends full name as "name", we split and use the first word
-        if (!firstName && res.data?.name) {
-          firstName = res.data.name.split(' ')[0];
-        }
-    
-        const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : 'U';
-    
-        localStorage.setItem('first_name', firstLetter); // Only save the initial
-        alert('Login successful!');
-        router.push('/');
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-        alert(errorMessage);
-      }
-    };
-    
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong!');
+    }
+  };
 
   return (
     <div
@@ -54,9 +45,9 @@ export default function LoginPage() {
       style={{ backgroundImage: "url('/background.jpg')" }}
     >
       <div className="bg-black/30 backdrop-blur-md border border-transparent p-8 rounded-2xl 
-                      shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] 
-                      hover:border-white transition-all duration-500 ease-in-out transform hover:scale-105 w-[90%] max-w-md text-white">
-        
+                    shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] 
+                    hover:border-white transition-all duration-500 ease-in-out transform hover:scale-105 w-[90%] max-w-md text-white">
+
         <h2 className="text-center text-3xl font-bold mb-6">Login</h2>
 
         <form onSubmit={handleSubmit}>
