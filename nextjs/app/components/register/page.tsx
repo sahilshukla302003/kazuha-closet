@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import API from '@/lib/api';
+import { userRegister } from '@/utils/api/userUtils';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,14 +20,20 @@ export default function RegisterPage() {
   };
 
   const handleRegister = async () => {
-    try {
-      const res = await API.post('/register/', form);
-      localStorage.setItem('first_name', form.first_name); // Save first name for profile icon
-      alert('Registration successful!');
-      router.push('/'); // Redirect to home
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.error || err.message || 'Something went wrong';
-      alert(errorMessage);
+    try{
+      console.log(form)      
+      const res=await userRegister(form)
+      if (res){
+        alert("Registration successful!");
+        router.push('/')
+      }else{
+        alert("Registration failed");
+
+      }
+    
+    }catch (err) {
+      console.error(err);
+      alert("Something went wrong!");
     }
   };
 
