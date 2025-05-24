@@ -4,8 +4,9 @@ from dotenv import load_dotenv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, LoginSerializer
-from django.contrib.auth.hashers import make_password, check_password  # ✨ Added this
+from .serializers import RegisterSerializer, LoginSerializer,ProfileSerializer
+from django.contrib.auth.hashers import make_password, check_password  
+from bson.objectid import ObjectId
 
 # Load environment variables from .env
 load_dotenv()
@@ -17,6 +18,7 @@ users_collection = db["Users"]
 
 class RegisterView(APIView):
     def post(self, request):
+        print(request.data)
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user_data = serializer.validated_data
@@ -39,11 +41,28 @@ class LoginView(APIView):
             user = users_collection.find_one({"email": email})
 
             if user and check_password(password, user['password']):
-                # ✅ Return first_name for profile icon
                 return Response({
                     "message": "Login successful",
-                    "first_name": user.get("first_name", "")
+                    "first_name": user.get("first_name", ""),
+                    "id": str(user.get("_id")),  
                 }, status=status.HTTP_200_OK)
 
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(APIView):
+    def get(self, request, user_id): 
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+
+        user_data = {
+            "email": user.get("email", ""),
+            "first_name": user.get("first_name", ""),
+            "last_name": user.get("last_name", ""),
+            "phone": user.get("phone", ""),
+        }
+        serializer = ProfileSerializer(user_data)
+        return Response(serializer.data)

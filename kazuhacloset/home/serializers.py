@@ -10,3 +10,11 @@ class RegisterSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+class ProfileSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    email=serializers.EmailField()
+    first_name= serializers.CharField()
+    last_name = serializers.CharField()
+    phone = serializers.CharField()
