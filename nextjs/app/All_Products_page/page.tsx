@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Navbar from "../components/Landingpage/Navbar";
+import Navbar from "../../components/Landingpage/Navbar";
 
 type Product = {
     id: number;
