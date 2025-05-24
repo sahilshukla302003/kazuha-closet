@@ -1,46 +1,77 @@
 'use client';
 
+import { useState } from 'react';
 import { Poppins } from 'next/font/google';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
 });
 
-export default function AboutSection() {
-  return (
-    <section
-      className={`${poppins.className} about-section relative pt-12 pb-28 overflow-hidden w-full text-white bg-black`}
-    >
-      {/* Heading */}
-      <h2 className="text-center text-5xl font-bold tracking-wider mb-24 z-10 relative drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
-        About Us
-      </h2>
+const creators = [
+  { name: 'Priyanshu', role: 'Frontend Developer', img: '/Giyuu.png' },
+  { name: 'Sahil', role: 'Backend Developer', img: '/Goku.png' },
+  { name: 'Aman', role: 'Database Administrator', img: '/Sabitoo.png' },
+];
 
-      {/* Creator Cards */}
-      <div className="flex justify-center gap-20 flex-wrap z-10 relative">
-        {[
-          { name: 'Priyanshu', role: 'Frontend Developer', img: '/Giyuu.png' },
-          { name: 'Sahil', role: 'Backend Developer', img: '/Goku.png' },
-          { name: 'Aman', role: 'Database Administrator', img: '/Sabitoo.png' },
-        ].map((member, index) => (
-          <div className="creator-card" key={index}>
-            <div className="bg" />
-            <div className="naruto" style={{ backgroundImage: `url(${member.img})` }} />
-            <div className="card-info">
-              <h3>{member.name}</h3>
-              <p>{member.role}</p>
+export default function AboutSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? creators.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === creators.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+      <section className={`${poppins.className} pt-78 pb-78 w-full text-white bg-black`}>
+      <div className="container mx-auto px-6 flex flex-col lg:flex-row items-center justify-between gap-12">
+        {/* Left Side: Heading/Description */}
+        <div className="lg:w-1/2 text-center lg:text-left space-y-6">
+          <h2 className="text-5xl font-bold tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+            About Us
+          </h2>
+          <p className="text-lg text-gray-300">
+            Meet the passionate team behind this project. We specialize in frontend, backend,
+            and database management to bring our ideas to life.
+          </p>
+        </div>
+
+        {/* Right Side: Slider */}
+        <div className="lg:w-1/2 flex items-center justify-center gap-10 relative z-10">
+          <button onClick={handlePrev}>
+            <ChevronLeft className="w-10 h-10 text-white hover:text-gray-300 transition" />
+          </button>
+
+          <div className="relative w-[20rem] h-[25rem] overflow-visible">
+            <div className="w-[20rem] h-[25rem]">
+              <div className="creator-card w-full h-full relative cursor-pointer">
+                <div className="bg" />
+                <div
+                  className="naruto"
+                  style={{ backgroundImage: `url(${creators[currentIndex].img})` }}
+                />
+                <div className="card-info">
+                  <h3>{creators[currentIndex].name}</h3>
+                  <p>{creators[currentIndex].role}</p>
+                </div>
+              </div>
             </div>
           </div>
-        ))}
+
+          <button onClick={handleNext}>
+            <ChevronRight className="w-10 h-10 text-white hover:text-gray-300 transition" />
+          </button>
+        </div>
       </div>
 
-      {/* Styles */}
+      {/* Card Styles */}
       <style jsx>{`
         .creator-card {
           position: relative;
-          width: 20rem;
-          height: 25rem;
           cursor: pointer;
         }
 
@@ -73,6 +104,7 @@ export default function AboutSection() {
           background-position: center;
           transition: transform 1s ease;
           z-index: 2;
+          top: 0;
         }
 
         .creator-card:hover .naruto {

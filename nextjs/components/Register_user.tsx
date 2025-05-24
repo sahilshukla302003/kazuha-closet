@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { userRegister } from '@/utils/api/userUtils';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,37 +16,45 @@ export default function RegisterPage() {
     password: '',
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
   const handleRegister = async () => {
-    try{
-      console.log(form)      
-      const res=await userRegister(form)
-      if (res){
-        alert("Registration successful!");
-        router.push('/')
-      }else{
-        alert("Registration failed");
-
+    try {
+      const res = await userRegister(form);
+      if (res) {
+        alert('Registration successful!');
+        router.push('/');
+      } else {
+        alert('Registration failed');
       }
-    
-    }catch (err) {
+    } catch (err) {
       console.error(err);
-      alert("Something went wrong!");
+      alert('Something went wrong!');
     }
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/background.jpg')" }}
-    >
-      <div className="bg-black/30 backdrop-blur-md border border-transparent p-8 rounded-2xl 
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Video */}
+      <video
+        autoPlay
+        muted
+        loop
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      >
+        <source src="/videos/tanjiro.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Form Content */}
+      <div className="relative z-10 bg-black/30 backdrop-blur-md border border-transparent p-8 rounded-2xl 
                       shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] 
                       hover:border-white transition-all duration-500 ease-in-out transform hover:scale-105 w-[90%] max-w-md text-white">
-        
+
         <h2 className="text-center text-3xl font-bold mb-6">Register</h2>
 
         {/* First Name */}
@@ -101,16 +110,23 @@ export default function RegisterPage() {
         </div>
 
         {/* Password */}
-        <div className="mb-6">
+        <div className="mb-6 relative">
           <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             onChange={handleChange}
             value={form.password}
             placeholder="Enter your password"
-            className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400"
+            className="w-full p-3 rounded-lg bg-black/40 placeholder-gray-300 text-white outline-none border border-gray-500 focus:border-yellow-400 pr-12"
           />
+          <button
+            type="button"
+            className="absolute right-3 top-9 text-gray-300 hover:text-yellow-400"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
 
         <button

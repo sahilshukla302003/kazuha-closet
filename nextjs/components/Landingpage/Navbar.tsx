@@ -3,6 +3,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
+import { Luckiest_Guy } from 'next/font/google';
+
+const luckiest = Luckiest_Guy({
+  subsets: ['latin'],
+  weight: '400',
+});
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -56,7 +62,7 @@ export default function Navbar() {
           className="flex items-center space-x-4 hover:scale-105 transition-transform duration-300 cursor-pointer"
         >
           <Image src="/logo.png" alt="Logo" width={48} height={48} className="rounded-full" />
-          <div className="text-lg leading-5 font-semibold tracking-wide">
+          <div className={`text-lg leading-5 font-semibold tracking-wide ${luckiest.className}`}>
             KAZUHA <br /> CLOSET
           </div>
         </Link>
@@ -78,7 +84,7 @@ export default function Navbar() {
 
         <div className="flex items-center justify-center space-x-8 text-white text-2xl relative">
           {/* Cart */}
-          <Link href="/cart">
+          <Link href="/components/cart">
             <div className="hover:scale-125 transition-transform duration-300 hover:text-yellow-400 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
                 <path

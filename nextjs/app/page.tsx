@@ -1,4 +1,5 @@
 'use client';
+
 import Sidebar from '../components/Landingpage/Sidebar';
 import Navbar from '../components/Landingpage/Navbar';
 import PromoCard from '../components/Landingpage/PromoCard';
@@ -8,7 +9,7 @@ import ContactSection from '../components/Landingpage/ContactSection';
 
 export default function Home() {
   return (
-    <main className="relative bg-gradient-to-br from-[#0f0f10] to-[#2c2c2e] min-h-screen scroll-smooth">
+    <main className="relative bg-gradient-to-bl from-[#000000] to-[#a3a3a3] min-h-screen scroll-smooth">
       <Sidebar />
 
       {/* Home Section */}

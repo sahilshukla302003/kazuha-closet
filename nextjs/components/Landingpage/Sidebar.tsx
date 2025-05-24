@@ -19,6 +19,14 @@ export default function Sidebar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+      setIsOpen(false); // close sidebar after clicking
+    }
+  };
+
   return (
     <>
       {/* Toggle Button */}
@@ -39,18 +47,30 @@ export default function Sidebar() {
           id="sidebar"
           className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-32 py-4 rounded-xl shadow-xl z-40"
         >
-          <ul className="space-y-8 text-sm px-4">
-            <li className="hover:text-yellow-400 cursor-pointer py-1">
-              <a href="#home">Home</a>
+          <ul className="space-y-4 text-sm px-4">
+            <li
+              className="hover:text-yellow-400 cursor-pointer py-1"
+              onClick={() => scrollToSection('home')}
+            >
+              Home
             </li>
-            <li className="hover:text-yellow-400 cursor-pointer py-1">
-              <a href="#products">Products</a>
+            <li
+              className="hover:text-yellow-400 cursor-pointer py-1"
+              onClick={() => scrollToSection('products')}
+            >
+              Products
             </li>
-            <li className="hover:text-yellow-400 cursor-pointer py-1">
-              <a href="#about">About</a>
+            <li
+              className="hover:text-yellow-400 cursor-pointer py-1"
+              onClick={() => scrollToSection('about')}
+            >
+              About
             </li>
-            <li className="hover:text-yellow-400 cursor-pointer py-1">
-              <a href="#contact">Contact</a>
+            <li
+              className="hover:text-yellow-400 cursor-pointer py-1"
+              onClick={() => scrollToSection('contact')}
+            >
+              Contact
             </li>
           </ul>
         </div>

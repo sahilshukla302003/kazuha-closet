@@ -1,49 +1,47 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 
-interface User {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-}
-
-const ProfilePage = () => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    console.log(userId)
-    if (userId) {
-      axios
-        .get(`/api/profile/${userId}`)
-        .then((res) => setUser(res.data))
-        .catch((err) => console.error("Failed to fetch user:", err));
-    }
-  }, []);
-
-  if (!user) return <div className="text-white p-6">Loading Profile...</div>;
-
+const ProfileSection = () => {
   return (
-    <div className="min-h-screen bg-black text-white font-bold">
-      <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-4xl mb-6 font-extrabold tracking-wider">MY PROFILE</h1>
-        <div className="bg-gray-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-lg">
-          <img
-            src="/default-avatar.png"
-            alt="Avatar"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-md"
-          />
-          <div>
-            <h2 className="text-2xl">{user.first_name} {user.last_name}</h2>
-            <p className="text-gray-300">{user.email}</p>
-            <p className="text-gray-400">{user.phone}</p>
-            <div className="mt-4 flex gap-4">
-              <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-xl">Edit Profile</button>
-              <button className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl">Logout</button>
+    <div className="min-h-screen bg-[#121212] flex items-center justify-center px-4">
+      <div className="relative w-full max-w-4xl h-[450px] rounded-[20px] bg-white/10 backdrop-blur-lg border border-white/20 flex shadow-xl overflow-hidden">
+        <div className="flex w-full">
+          {/* Left - Profile Avatar */}
+          <div className="w-1/2 flex items-center justify-center">
+            <div className="w-48 h-48 bg-gray-200 rounded-full flex items-center justify-center text-black font-bold text-xl">
+              PFP
             </div>
+          </div>
+
+          {/* Divider */}
+          <div className="w-[2px] bg-white/40 my-12 rounded"></div>
+
+          {/* Right - Profile Inputs */}
+          <div className="w-1/2 flex flex-col justify-center px-6 space-y-6">
+            <h2 className="text-2xl font-bold text-white text-center mb-2">
+              PROFILE SECTION
+            </h2>
+            <input
+              type="text"
+              placeholder="First Name"
+              className="px-4 py-3 rounded-full bg-white/90 text-black outline-none"
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="px-4 py-3 rounded-full bg-white/90 text-black outline-none"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="px-4 py-3 rounded-full bg-white/90 text-black outline-none"
+            />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              className="px-4 py-3 rounded-full bg-white/90 text-black outline-none"
+            />
           </div>
         </div>
       </div>
@@ -51,4 +49,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfileSection;
