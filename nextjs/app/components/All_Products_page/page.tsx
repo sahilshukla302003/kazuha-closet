@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import Navbar from "../Landingpage/Navbar";
-import Image from "next/image";
+import Navbar from "../../components/Landingpage/Navbar";
 
 type Product = {
     id: number;

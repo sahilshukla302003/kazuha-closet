@@ -27,7 +27,7 @@ export default function LoginPage() {
     try {
       const res = await userLogin(form);
 
-      if (res) {
+      if (res && res.id) {
       localStorage.setItem('userid', res.id);
       router.push('/');
       } else {
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
         <p className="mt-4 text-center text-sm text-white">
           Not registered?{' '}
-          <Link href="/components/register" className="text-yellow-400 hover:underline">
+          <Link href="/register" className="text-yellow-400 hover:underline">
             Register here
           </Link>
         </p>

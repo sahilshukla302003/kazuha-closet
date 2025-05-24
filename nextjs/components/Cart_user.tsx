@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Navbar from '../Landingpage/Navbar';
+import Navbar from './Landingpage/Navbar';
 import { Poppins } from 'next/font/google';
 import Image from 'next/image';
 
