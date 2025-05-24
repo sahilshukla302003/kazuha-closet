@@ -15,9 +15,10 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
+    console.log(userId)
     if (userId) {
       axios
-        .get(`/api/user/${userId}`)
+        .get(`/api/profile/${userId}`)
         .then((res) => setUser(res.data))
         .catch((err) => console.error("Failed to fetch user:", err));
     }

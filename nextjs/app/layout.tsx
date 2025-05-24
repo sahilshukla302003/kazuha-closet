@@ -5,7 +5,7 @@ import { Luckiest_Guy } from 'next/font/google';
 import 'aos/dist/aos.css';
 
 import type { Metadata } from 'next';
-import Sidebar from './components/Landingpage/Sidebar'; // 👈 import Sidebar
+import Sidebar from '../components/Landingpage/Sidebar'; // 👈 import Sidebar
 
 const luckiest = Luckiest_Guy({
   subsets: ['latin'],
