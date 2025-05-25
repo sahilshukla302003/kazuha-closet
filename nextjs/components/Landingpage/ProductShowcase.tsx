@@ -139,7 +139,7 @@ const ProductShowcase = () => {
       {/* Navigate to all products */}
       <div className="absolute top-10 right-10">
         <button
-          onClick={() => router.push("/components/All_Products_page")}
+          onClick={() => router.push("/All_Products_page")}
           className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
         >
           View All Products

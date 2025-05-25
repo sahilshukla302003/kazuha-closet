@@ -17,7 +17,7 @@ const creators = [
     img: '/Goku.png',
     skills: ['Node.js', 'Python'],
     experience: '4+ Years',
-    projects: '20+ Projects',
+    projects: '14+ Projects',
     description: 'Expert backend developer focused on scalable architecture and database optimization.'
   },
   { 
@@ -43,7 +43,7 @@ export default function AboutSection() {
     setCurrentIndex((prev) => (prev === creators.length - 1 ? 0 : prev + 1));
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
