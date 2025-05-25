@@ -84,7 +84,7 @@ export default function Navbar() {
 
         <div className="flex items-center justify-center space-x-8 text-white text-2xl relative">
           {/* Cart */}
-          <Link href="/components/cart">
+          <Link href="/cart">
             <div className="hover:scale-125 transition-transform duration-300 hover:text-yellow-400 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
                 <path
