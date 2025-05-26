@@ -4,6 +4,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { Luckiest_Guy } from 'next/font/google';
+import { getUser } from '@/utils/api/userUtils';
+
+interface User {
+  first_name?: string;
+  avatarUrl?: string;
+}
 
 const luckiest = Luckiest_Guy({
   subsets: ['latin'],
@@ -15,6 +21,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [firstLetter, setFirstLetter] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userData, setUserData] = useState<User | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,9 +37,18 @@ export default function Navbar() {
       }
     };
 
-    const firstName = localStorage.getItem('first_name');
-    if (firstName && firstName.length > 0) {
-      setFirstLetter(firstName[0].toUpperCase());
+    const userId = localStorage.getItem('userid');
+    if (userId) {
+      const fetchUser = async () => {
+        try {
+          const user = await getUser(userId);
+          setUserData(user);
+          setFirstLetter(user.first_name?.[0]?.toUpperCase() || null);
+        } catch (err) {
+          console.error('Error fetching user:', err);
+        }
+      };
+      fetchUser();
     }
 
     window.addEventListener('scroll', handleScroll);
@@ -46,7 +62,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = '/page.tsx';
+    window.location.href = '/';
   };
 
   return (
@@ -82,6 +98,7 @@ export default function Navbar() {
           />
         </div>
 
+        {/* Right - Icons */}
         <div className="flex items-center justify-center space-x-8 text-white text-2xl relative">
           {/* Cart */}
           <Link href="/cart">
@@ -101,9 +118,21 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <div
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="bg-yellow-400 text-black font-bold rounded-full w-8 h-8 flex items-center justify-center hover:scale-125 transition-transform duration-300 cursor-pointer"
+                className="w-9 h-9 rounded-full overflow-hidden border-2 border-yellow-400 hover:scale-125 transition-transform duration-300 cursor-pointer"
               >
-                {firstLetter}
+                {userData?.avatarUrl ? (
+                  <Image
+                    src={userData.avatarUrl}
+                    alt="User Avatar"
+                    width={36}
+                    height={36}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="bg-yellow-400 text-black font-bold w-full h-full flex items-center justify-center">
+                    {firstLetter}
+                  </div>
+                )}
               </div>
 
               {dropdownOpen && (
