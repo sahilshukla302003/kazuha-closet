@@ -11,4 +11,9 @@ export  const userLogin= async(data: any)=>{
     return res.data
  };
 
+export const getUser=async(userId:string)=>{
+    const res=await userConnection.get(`api/profile/${userId}/`);
+    return res.data;
+}
+
 
