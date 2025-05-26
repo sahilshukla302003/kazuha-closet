@@ -59,6 +59,7 @@ class UserProfileView(APIView):
             return Response({"error": "User not found"}, status=404)
 
         user_data = {
+            "id": str(user["_id"]),
             "email": user.get("email", ""),
             "first_name": user.get("first_name", ""),
             "last_name": user.get("last_name", ""),
