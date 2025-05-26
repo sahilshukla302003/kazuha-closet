@@ -1,17 +1,14 @@
 // app/layout.tsx
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-  rel="stylesheet"
-/>
 import './globals.css';
-import { Luckiest_Guy } from 'next/font/google';
 import 'aos/dist/aos.css';
+import { Poppins } from 'next/font/google';
 
 import type { Metadata } from 'next';
 
-const luckiest = Luckiest_Guy({
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: '400',
+  weight: ['300', '400', '600'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -25,8 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <head />
-      <body className="bg-[#1b1b1d]">
+      <body className={`bg-[#1b1b1d] ${poppins.className}`}>
         <main className="relative min-h-screen overflow-x-hidden">
           {children}
         </main>
