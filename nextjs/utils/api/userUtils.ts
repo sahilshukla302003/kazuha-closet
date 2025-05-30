@@ -17,3 +17,9 @@ export const getUser=async(userId:string)=>{
 }
 
 
+export const updateUser=async(userId:string, data:any)=>{
+    const res=await userConnection.put(`api/updateprofile/${userId}/`,data);
+    return res.data;
+}
+
+
