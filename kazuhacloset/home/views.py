@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, LoginSerializer,ProfileSerializer
+from .serializers import RegisterSerializer, LoginSerializer,ProfileSerializer,UpdateProfileSerializer
 from django.contrib.auth.hashers import make_password, check_password  
 from bson.objectid import ObjectId
 
@@ -67,3 +67,24 @@ class UserProfileView(APIView):
         }
         serializer = ProfileSerializer(user_data)
         return Response(serializer.data)
+    
+
+class UpdateProfileView(APIView):
+    def put(self, request, user_id):
+        serializer = UpdateProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            update_data = serializer.validated_data
+
+            user = users_collection.find_one({"_id": ObjectId(user_id)})
+            if not user:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            users_collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": update_data}
+            )
+
+            return Response({"message": "Profile updated successfully"}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

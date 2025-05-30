@@ -18,3 +18,12 @@ class ProfileSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     phone = serializers.CharField()
+
+class UpdateProfileSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=15)
+
+
+
