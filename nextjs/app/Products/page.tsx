@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import Navbar from "../../components/Landingpage/Navbar";
-import { Search, Filter, Grid, List, Heart, ShoppingCart, Star, Eye, SlidersHorizontal } from "lucide-react";
+import { Search, Grid, List, Heart, ShoppingCart, Star, Eye, SlidersHorizontal } from "lucide-react";
 
 type Product = {
     id: number;
@@ -131,7 +131,7 @@ const AllProductsPage = () => {
 
     // Filter and sort products
     const filteredAndSortedProducts = useMemo(() => {
-        let filtered = products.filter(product => {
+        const filtered = products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
