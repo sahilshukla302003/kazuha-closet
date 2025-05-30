@@ -1,48 +1,49 @@
-"use client";
 import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Product = {
   id: number;
   name: string;
   price: string;
   type: "video" | "image";
-  video: string;
-  description: string;
+  media: string;
+  subtitle: string;
+  description?: string;
 };
 
 const products: Product[] = [
   {
     id: 1,
     name: "Naruto Tee",
+    subtitle: "Sage Mode Series",
     price: "₹599",
     type: "video",
-    video: "/videos/goku.mp4",
-    description: "High-quality Naruto-themed T-shirt with durable print.",
+    media: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2732_1440_25fps.mp4",
+    description: "Premium quality t-shirt featuring Naruto in Sage Mode. Made with 100% cotton for maximum comfort."
   },
   {
     id: 2,
     name: "Luffy Tee",
+    subtitle: "Straw Hat Pirates",
     price: "₹649",
-    type: "video",
-    video: "/videos/naruto.mp4",
-    description: "One Piece Luffy T-shirt made of soft, breathable fabric.",
+    type: "video", 
+    media: "https://videos.pexels.com/video-files/3209828/3209828-uhd_2732_1440_25fps.mp4",
+    description: "Join the Straw Hat crew with this awesome Luffy design. High-quality print on soft cotton fabric."
   },
   {
     id: 3,
     name: "Sasuke Tee",
+    subtitle: "Uchiha Legacy",
     price: "₹699",
     type: "video",
-    video: "/videos/toji.mp4",
-    description: "Cool and stylish Sasuke Tee with a bold ninja design.",
+    media: "https://videos.pexels.com/video-files/3394651/3394651-uhd_2732_1440_25fps.mp4",
+    description: "Embrace the power of the Uchiha clan with this premium Sasuke t-shirt. Perfect for anime fans."
   },
 ];
 
 const ProductShowcase = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
   const observerRef = useRef<(HTMLVideoElement | null)[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -64,129 +65,220 @@ const ProductShowcase = () => {
     return () => observer.disconnect();
   }, []);
 
-  return (
-    <div
-      className="relative w-full h-[90vh] flex items-center justify-center"
-      style={{
-        backgroundImage: `url('/background.jpg')`,
-        backgroundAttachment: "fixed",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="overflow-x-auto flex gap-10 px-16 py-20 snap-x snap-mandatory">
-        {products.map((product, index) => (
-          <div
-            key={product.id}
-            className={`snap-center flex-shrink-0 w-[280px] md:w-[360px] rounded-xl cursor-pointer 
-              ${index === 1 ? "scale-110 z-10" : "scale-90"} 
-              opacity-100 transition-all duration-500`}
-            onClick={() => setSelectedProduct(product)}
-          >
-            <div className="bg-black/20 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-500 ease-in-out transform hover:scale-105 relative">
-              {product.type === "video" ? (
-                <video
-                  ref={(el) => {
-                    if (el && !observerRef.current.includes(el)) {
-                      observerRef.current.push(el);
-                    }
-                  }}
-                  src={product.video}
-                  muted
-                  loop
-                  playsInline
-                  preload="none"
-                  className="w-full h-[320px] object-contain rounded-lg"
-                  onMouseEnter={(e) => {
-                    const playPromise = e.currentTarget.play();
-                    if (playPromise !== undefined) {
-                      playPromise.catch((error) =>
-                        console.warn("Video play interrupted", error)
-                      );
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.pause();
-                    e.currentTarget.currentTime = 0;
-                  }}
-                />
-              ) : (
-                <Image
-                  className="rounded-xl mb-4"
-                  src={product.video}
-                  alt={product.name}
-                  width={360}
-                  height={320}
-                  style={{ width: "100%", height: "320px", objectFit: "cover" }}
-                />
-              )}
-              <div className="text-center mt-2">
-                <h2 className="text-white text-xl font-bold mb-1">
-                  {product.name}
-                </h2>
-                <p className="text-yellow-400 text-lg font-semibold">
-                  {product.price}
-                </p>
-              </div>
-              <button className="w-full mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black text-lg font-semibold rounded-full transition-transform duration-300 hover:scale-105 shadow-md">
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+  const nextProduct = () => {
+    setCurrentIndex((prev) => (prev + 1) % products.length);
+  };
 
-      {/* Navigate to all products */}
-      <div className="absolute top-10 right-10">
-        <button
-          onClick={() => router.push("/All_Products_page")}
-          className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-6 rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
-        >
-          View All Products
+  const prevProduct = () => {
+    setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
+  };
+
+  return (
+    <div className="relative w-full min-h-screen overflow-hidden">
+      <div className="absolute top-4 right-4 z-20">
+        <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-3 text-xs sm:text-sm rounded-full shadow-lg transition-transform duration-300 hover:scale-105">
+          View All
         </button>
       </div>
 
-      {/* Modal */}
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white w-[90%] md:w-[500px] p-8 rounded-2xl shadow-2xl relative border border-yellow-400">
-            <button
-              className="absolute top-2 right-3 text-black text-2xl font-bold"
-              onClick={() => setSelectedProduct(null)}
-            >
-              &times;
-            </button>
-            <h2 className="text-3xl font-extrabold mb-4 text-center text-black border-b pb-2">
-              {selectedProduct.name}
-            </h2>
-            <p className="text-black text-lg mb-4 text-center">
-              {selectedProduct.description}
-            </p>
-            <p className="text-yellow-600 text-2xl font-bold mb-6 text-center">
-              {selectedProduct.price}
-            </p>
-            {selectedProduct.type === "video" ? (
-              <video
-                src={selectedProduct.video}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-auto object-contain rounded-xl shadow-md"
-              />
-            ) : (
-              <Image
-                className="rounded-xl shadow-md mb-4"
-                src={selectedProduct.video}
-                alt={selectedProduct.name}
-                width={500}
-                height={400}
-                style={{ width: "100%", height: "auto", objectFit: "cover" }}
-              />
-            )}
+      <button
+        onClick={prevProduct}
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 md:hidden"
+      >
+        <ChevronLeft size={24} />
+      </button>
+      
+      <button
+        onClick={nextProduct}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 md:hidden"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      <div className="flex items-center justify-center min-h-screen md:min-h-0 md:h-screen">
+        <div 
+          className="relative w-full h-full"
+          style={{
+            backgroundImage: "url('/background.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed"
+          }}
+        >
+          <div className="absolute inset-0 bg-black/20"></div>
+          
+          <div className="relative z-10 px-2 py-8 md:py-4 h-full flex flex-col justify-center">
+            
+            <div className="text-center mb-8 md:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                FEATURED PRODUCTS
+              </h2>
+              <div className="w-16 h-1 bg-gradient-to-r from-yellow-400 to-purple-400 mx-auto mb-4"></div>
+              <p className="text-gray-300 text-sm">
+                <span className="md:hidden">Navigate through our collection</span>
+                <span className="hidden md:inline">Swipe to explore our collection</span>
+              </p>
+            </div>
+
+            <div className="md:hidden">
+              <div className="flex justify-center">
+                <div className="w-56 xs:w-60 sm:w-72 transition-all duration-500 hover:-translate-y-8">
+                  <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-500 overflow-hidden">
+                    
+                    <div className="relative h-48 sm:h-56 overflow-hidden">
+                      {products[currentIndex].type === "video" ? (
+                        <video
+                          ref={(el) => {
+                            if (el && !observerRef.current.includes(el)) {
+                              observerRef.current.push(el);
+                            }
+                          }}
+                          src={products[currentIndex].media}
+                          muted
+                          loop
+                          playsInline
+                          preload="none"
+                          className="w-full h-full object-cover"
+                          onMouseEnter={(e) => e.currentTarget.play()}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.pause();
+                            e.currentTarget.currentTime = 0;
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={products[currentIndex].media}
+                          alt={products[currentIndex].name}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300"></div>
+                      <div className="absolute top-3 left-3 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
+                        FEATURED
+                      </div>
+                      <div className="absolute top-3 right-3 w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+
+                    <div className="p-4 sm:p-6">
+                      <div className="mb-4">
+                        <h3 className="text-white text-lg sm:text-xl font-bold mb-1">
+                          {products[currentIndex].name}
+                        </h3>
+                        <p className="text-gray-300 text-sm mb-2">
+                          {products[currentIndex].subtitle}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-yellow-400 text-xl sm:text-2xl font-bold">
+                          {products[currentIndex].price}
+                        </div>
+                      </div>
+                      <button 
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full px-4 py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-bold rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ✅ Desktop View Cards - Larger with more spacing */}
+            <div className="hidden md:flex flex-1 items-center justify-center h-full">
+              <div className="overflow-x-auto pb-4 scrollbar-hide flex items-center">
+                <div className="flex gap-8 px-4 justify-center items-center min-h-full" style={{ minWidth: "max-content" }}>
+                  {products.map((product, index) => (
+                    <div
+                      key={product.id}
+                      className="flex-shrink-0 w-80 transition-all duration-500 hover:scale-105"
+                    >
+                      <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-500 overflow-hidden">
+                        <div className="relative h-60 overflow-hidden">
+                          {product.type === "video" ? (
+                            <video
+                              ref={(el) => {
+                                if (el && !observerRef.current.includes(el)) {
+                                  observerRef.current.push(el);
+                                }
+                              }}
+                              src={product.media}
+                              muted
+                              loop
+                              playsInline
+                              preload="none"
+                              className="w-full h-full object-cover"
+                              onMouseEnter={(e) => e.currentTarget.play()}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.pause();
+                                e.currentTarget.currentTime = 0;
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={product.media}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                          <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300"></div>
+                          {index === currentIndex && (
+                            <div className="absolute top-3 left-3 bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">
+                              FEATURED
+                            </div>
+                          )}
+                          {index === currentIndex && (
+                            <div className="absolute top-3 right-3 w-3 h-3 bg-white rounded-full"></div>
+                          )}
+                        </div>
+
+                        <div className="p-4">
+                          <div className="mb-3">
+                            <h3 className="text-white text-lg font-bold mb-1">
+                              {product.name}
+                            </h3>
+                            <p className="text-gray-300 text-sm mb-2">
+                              {product.subtitle}
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="text-yellow-400 text-xl font-bold">
+                              {product.price}
+                            </div>
+                          </div>
+                          <button 
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full px-4 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-bold rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-6 md:mt-4 gap-2">
+              {products.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? "bg-yellow-400 scale-125" 
+                      : "bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

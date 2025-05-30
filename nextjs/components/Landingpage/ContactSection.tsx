@@ -10,46 +10,50 @@ const poppins = Poppins({
 });
 
 const fadeInLeft = {
-  hidden: { opacity: 0, x: -50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
+  hidden: { opacity: 0, x: -30 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
 };
 
 const fadeInRight = {
-  hidden: { opacity: 0, x: 50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
+  hidden: { opacity: 0, x: 30 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
 };
 
 const ContactSection = () => {
   return (
     <section
       id="contact"
-      className={`${poppins.className} relative min-h-screen px-6 py-16 flex items-center justify-center overflow-hidden`}
+      className={`${poppins.className} relative min-h-screen px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 flex items-center justify-center overflow-hidden mt-16 md:mt-0`}
     >
       {/* Background image with dark overlay */}
       <div className="absolute inset-0 bg-[url('/itachi.png')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-60 sm:opacity-50"></div>
       </div>
 
       {/* Overlay content */}
-      <div className="relative z-10 max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div className="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
         {/* Left Info */}
         <motion.div
           variants={fadeInLeft}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="flex flex-col justify-center space-y-6 text-white"
+          className="flex flex-col justify-center space-y-4 sm:space-y-6 text-white order-2 lg:order-1"
         >
-          <h2 className="text-5xl font-extrabold tracking-tight leading-tight">Get in Touch</h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-center lg:text-left">
+            Get in Touch
+          </h2>
 
-          <div className="space-y-2">
-            <h4 className="text-2xl font-semibold">Email</h4>
-            <p className="text-lg text-gray-300">contact@yourdomain.com</p>
+          <div className="space-y-1 sm:space-y-2 text-center lg:text-left">
+            <h4 className="text-xl sm:text-2xl font-semibold">Email</h4>
+            <p className="text-base sm:text-lg text-gray-300 break-all sm:break-normal">
+              contact@yourdomain.com
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="text-2xl font-semibold">Location</h4>
-            <p className="text-lg text-gray-300">Bangalore, India</p>
+          <div className="space-y-1 sm:space-y-2 text-center lg:text-left">
+            <h4 className="text-xl sm:text-2xl font-semibold">Location</h4>
+            <p className="text-base sm:text-lg text-gray-300">Bangalore, India</p>
           </div>
         </motion.div>
 
@@ -59,14 +63,18 @@ const ContactSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="bg-white/10 backdrop-blur-md text-white p-10 rounded-3xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl space-y-6 border border-white/20"
+          className="bg-white/10 backdrop-blur-md text-white p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl shadow-2xl transform transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-3xl space-y-4 sm:space-y-6 border border-white/20 order-1 lg:order-2"
           action="https://formsubmit.co/kazuhastore8@gmail.com"
           method="POST"
         >
           {/* Hidden inputs for formsubmit */}
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="box" />
-          <input type="hidden" name="_autoresponse" value="Thanks for reaching out! We’ll get back to you soon." />
+          <input
+            type="hidden"
+            name="_autoresponse"
+            value="Thanks for reaching out! We'll get back to you soon."
+          />
 
           <div>
             <label className="block text-sm font-semibold mb-2">Name</label>
@@ -75,7 +83,7 @@ const ContactSection = () => {
               name="name"
               required
               placeholder="Your name"
-              className="w-full p-4 bg-white/20 placeholder-white text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition"
+              className="w-full p-3 sm:p-4 bg-white/20 placeholder-white/70 text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition text-base"
             />
           </div>
 
@@ -86,7 +94,7 @@ const ContactSection = () => {
               name="email"
               required
               placeholder="you@example.com"
-              className="w-full p-4 bg-white/20 placeholder-white text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition"
+              className="w-full p-3 sm:p-4 bg-white/20 placeholder-white/70 text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition text-base"
             />
           </div>
 
@@ -96,14 +104,14 @@ const ContactSection = () => {
               name="message"
               required
               placeholder="Type your message..."
-              rows={5}
-              className="w-full p-4 bg-white/20 placeholder-white text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition"
+              rows={4}
+              className="w-full p-3 sm:p-4 bg-white/20 placeholder-white/70 text-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-white transition resize-none text-base"
             ></textarea>
           </div>
 
           <button
             type="submit"
-            className="block w-full bg-black text-white py-3 rounded-md text-lg font-semibold text-center hover:bg-gray-800 transition"
+            className="block w-full bg-black text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold text-center hover:bg-gray-800 transition-colors duration-200 active:scale-95"
           >
             Send Message
           </button>

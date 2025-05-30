@@ -43,7 +43,7 @@ export default function AboutSection() {
     setCurrentIndex((prev) => (prev === creators.length - 1 ? 0 : prev + 1));
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -63,70 +63,57 @@ export default function AboutSection() {
   };
 
   return (
-    <section className="py-16 w-full text-white bg-black min-h-screen flex flex-col justify-center relative overflow-hidden">
+    <section className="w-full text-white bg-black flex flex-col justify-center relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute w-24 h-24 bg-white/10 rounded-full top-[10%] left-[20%] animate-float delay-0" />
-        <div className="absolute w-16 h-16 bg-white/10 rounded-full top-[30%] left-[75%] animate-float delay-1000" />
-        <div className="absolute w-20 h-20 bg-white/10 rounded-full top-[60%] left-[40%] animate-float delay-2000" />
-        <div className="absolute w-28 h-28 bg-white/10 rounded-full top-[85%] left-[70%] animate-float delay-3000" />
+        <div className="absolute w-16 h-16 md:w-24 md:h-24 bg-white/10 rounded-full top-[10%] left-[20%] animate-float delay-0" />
+        <div className="absolute w-12 h-12 md:w-16 md:h-16 bg-white/10 rounded-full top-[30%] left-[75%] animate-float delay-1000" />
+        <div className="absolute w-14 h-14 md:w-20 md:h-20 bg-white/10 rounded-full top-[60%] left-[40%] animate-float delay-2000" />
+        <div className="absolute w-20 h-20 md:w-28 md:h-28 bg-white/10 rounded-full top-[85%] left-[70%] animate-float delay-3000" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-6xl relative z-10 py-8 md:py-12">
         
         {/* Centered Title */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-wider animate-title">
+        <div className="text-center mb-6 md:mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-wider animate-title">
             About Us
           </h2>
         </div>
 
-        {/* Main Layout - Centered with cards around */}
-        <div className="relative flex items-center justify-center min-h-[500px]">
-          
-          {/* Left Side Cards */}
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 space-y-6">
-            {/* Skills Card */}
-            <div className="detail-card skills-card" style={{ transform: 'rotate(-8deg)' }}>
-              <div className="detail-bg" />
-              <div className="card-frame"></div>
-              <div className="card-glow"></div>
-              <div className="detail-content">
-                <h4 className="detail-title">SKILLS</h4>
-                <div className="detail-info">
-                  {creators[currentIndex].skills.map((skill, idx) => (
-                    <span key={idx} className="skill-tag">{skill}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Experience Card */}
-            <div className="detail-card experience-card" style={{ transform: 'rotate(8deg)' }}>
-              <div className="detail-bg" />
-              <div className="card-frame"></div>
-              <div className="card-glow"></div>
-              <div className="detail-content">
-                <h4 className="detail-title">EXPERIENCE</h4>
-                <div className="detail-info">
-                  <span className="experience-text">{creators[currentIndex].experience}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Center: Profile Card with Navigation */}
-          <div className="flex items-center justify-center gap-6">
-            {/* Previous Button */}
+        {/* Mobile Layout */}
+        <div className="block md:hidden space-y-4">
+          {/* Navigation */}
+          <div className="flex items-center justify-center gap-4 mb-4">
             <button 
               onClick={handlePrev}
-              className="nav-button z-20 p-3 rounded-full transition-all duration-300"
+              className="nav-button z-20 p-2 rounded-full transition-all duration-300"
             >
-              <ChevronLeft className="w-6 h-6 text-white" />
+              <ChevronLeft className="w-5 h-5 text-white" />
             </button>
+            
+            <div className="flex space-x-2">
+              {creators.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex ? 'bg-white' : 'bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
 
-            {/* Main Profile Card */}
-            <div className="relative w-80 h-96">
+            <button 
+              onClick={handleNext}
+              className="nav-button z-20 p-2 rounded-full transition-all duration-300"
+            >
+              <ChevronRight className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          {/* Profile Card */}
+          <div className="flex justify-center mb-4">
+            <div className="w-72 h-80 sm:w-80 sm:h-96">
               <div 
                 className="creator-card w-full h-full relative cursor-pointer" 
                 onMouseMove={handleMouseMove} 
@@ -150,33 +137,56 @@ export default function AboutSection() {
                 </div>
               </div>
             </div>
-
-            {/* Next Button */}
-            <button 
-              onClick={handleNext}
-              className="nav-button z-20 p-3 rounded-full transition-all duration-300"
-            >
-              <ChevronRight className="w-6 h-6 text-white" />
-            </button>
           </div>
 
-          {/* Right Side Cards */}
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 space-y-6">
-            {/* Projects Card */}
-            <div className="detail-card projects-card" style={{ transform: 'rotate(8deg)' }}>
+          {/* Info Cards Grid */}
+          <div className="grid grid-cols-1 gap-3 px-2">
+            {/* Skills Card */}
+            <div className="detail-card mobile-card">
               <div className="detail-bg" />
               <div className="card-frame"></div>
               <div className="card-glow"></div>
               <div className="detail-content">
-                <h4 className="detail-title">PROJECTS</h4>
+                <h4 className="detail-title">SKILLS</h4>
                 <div className="detail-info">
-                  <span className="projects-text">{creators[currentIndex].projects}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {creators[currentIndex].skills.map((skill, idx) => (
+                      <span key={idx} className="skill-tag">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Experience and Projects Row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="detail-card mobile-card">
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">EXPERIENCE</h4>
+                  <div className="detail-info">
+                    <span className="experience-text text-lg">{creators[currentIndex].experience}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-card mobile-card">
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">PROJECTS</h4>
+                  <div className="detail-info">
+                    <span className="projects-text text-lg">{creators[currentIndex].projects}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Description Card */}
-            <div className="detail-card description-card" style={{ transform: 'rotate(-8deg)' }}>
+            <div className="detail-card mobile-card">
               <div className="detail-bg" />
               <div className="card-frame"></div>
               <div className="card-glow"></div>
@@ -189,124 +199,187 @@ export default function AboutSection() {
             </div>
           </div>
         </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:block">
+          <div className="relative flex items-center justify-center min-h-[500px]">
+            
+            {/* Left Side Cards */}
+            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 space-y-6">
+              {/* Skills Card */}
+              <div className="detail-card skills-card" style={{ transform: 'rotate(-8deg)' }}>
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">SKILLS</h4>
+                  <div className="detail-info">
+                    {creators[currentIndex].skills.map((skill, idx) => (
+                      <span key={idx} className="skill-tag">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Experience Card */}
+              <div className="detail-card experience-card" style={{ transform: 'rotate(8deg)' }}>
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">EXPERIENCE</h4>
+                  <div className="detail-info">
+                    <span className="experience-text">{creators[currentIndex].experience}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Center: Profile Card with Navigation */}
+            <div className="flex items-center justify-center gap-6">
+              {/* Previous Button */}
+              <button 
+                onClick={handlePrev}
+                className="nav-button z-20 p-3 rounded-full transition-all duration-300"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Main Profile Card */}
+              <div className="relative w-80 h-96">
+                <div 
+                  className="creator-card w-full h-full relative cursor-pointer" 
+                  onMouseMove={handleMouseMove} 
+                  onMouseLeave={handleMouseLeave}
+                  style={{ 
+                    transform: cardTransform, 
+                    transition: cardTransform.includes('scale3d(1, 1, 1)') ? 'transform 0.6s ease-out' : 'none' 
+                  }}
+                >
+                  <div className="bg" />
+                  <div className="main-card-frame"></div>
+                  <div className="main-card-glow"></div>
+                  <div className="card-bg-image" />
+                  <div
+                    className="naruto"
+                    style={{ backgroundImage: `url(${creators[currentIndex].img})` }}
+                  />
+                  <div className="card-info">
+                    <h3>{creators[currentIndex].name}</h3>
+                    <p>{creators[currentIndex].role}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next Button */}
+              <button 
+                onClick={handleNext}
+                className="nav-button z-20 p-3 rounded-full transition-all duration-300"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            </div>
+
+            {/* Right Side Cards */}
+            <div className="absolute right-0 top-1/2 transform -translate-y-1/2 space-y-6">
+              {/* Projects Card */}
+              <div className="detail-card projects-card" style={{ transform: 'rotate(8deg)' }}>
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">PROJECTS</h4>
+                  <div className="detail-info">
+                    <span className="projects-text">{creators[currentIndex].projects}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description Card */}
+              <div className="detail-card description-card" style={{ transform: 'rotate(-8deg)' }}>
+                <div className="detail-bg" />
+                <div className="card-frame"></div>
+                <div className="card-glow"></div>
+                <div className="detail-content">
+                  <h4 className="detail-title">ABOUT</h4>
+                  <div className="detail-info">
+                    <p className="description-text">{creators[currentIndex].description}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <style jsx>{`
         /* Color palette variables */
         :root {
-        /* White and Off-Whites */
-        --white: #FFFFFF;
-        --off-white: #F9F9F9;
-        --soft-white: #F2F2F2;
+          /* White and Off-Whites */
+          --white: #FFFFFF;
+          --off-white: #F9F9F9;
+          --soft-white: #F2F2F2;
 
-        /* Light Greys */
-        --light-gray: #E5E5E5;
-        --gray-100: #D4D4D4;
-        --gray-200: #BDBDBD;
+          /* Light Greys */
+          --light-gray: #E5E5E5;
+          --gray-100: #D4D4D4;
+          --gray-200: #BDBDBD;
 
-        /* Medium Greys */
-        --gray-300: #A3A3A3;
-        --gray-400: #8C8C8C;
-        --gray-500: #737373;
+          /* Medium Greys */
+          --gray-300: #A3A3A3;
+          --gray-400: #8C8C8C;
+          --gray-500: #737373;
 
-        /* Dark Greys */
-        --dark-gray: #595959;
-        --gray-700: #404040;
-        --gray-800: #2C2C2C;
+          /* Dark Greys */
+          --dark-gray: #595959;
+          --gray-700: #404040;
+          --gray-800: #2C2C2C;
 
-        /* Black and Near-Blacks */
-        --black: #000000;
-        --soft-black: #1A1A1A;
-        --charcoal: #121212;
-      }
+          /* Black and Near-Blacks */
+          --black: #000000;
+          --soft-black: #1A1A1A;
+          --charcoal: #121212;
+        }
 
+        /* Floating animation */
+        @keyframes float {
+          0% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.08;
+          }
+          50% {
+            transform: translateY(-30px) rotate(180deg);
+            opacity: 0.15;
+          }
+          100% {
+            transform: translateY(0px) rotate(360deg);
+            opacity: 0.08;
+          }
+        }
 
-        /* Floating background shapes */
-            .floating-shapes {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              top: 0;
-              left: 0;
-              z-index: 0;
-              pointer-events: none;
-              overflow: hidden;
-            }
+        .animate-float {
+          animation: float 25s infinite linear;
+        }
 
-            .shape {
-              position: absolute;
-              background: linear-gradient(45deg, var(--primary-orange), var(--secondary-orange));
-              border-radius: 50%;
-              opacity: 0.08;
-              animation: float 25s infinite linear;
-              z-index: 0;
-            }
+        .delay-0 { animation-delay: 0s; }
+        .delay-1000 { animation-delay: -8s; }
+        .delay-2000 { animation-delay: -16s; }
+        .delay-3000 { animation-delay: -24s; }
 
-            .shape-1 {
-              width: 100px;
-              height: 100px;
-              top: 20%;
-              left: 10%;
-              animation-delay: 0s;
-            }
-
-            .shape-2 {
-              width: 150px;
-              height: 150px;
-              top: 60%;
-              right: 15%;
-              animation-delay: -8s;
-            }
-
-            .shape-3 {
-              width: 80px;
-              height: 80px;
-              top: 80%;
-              left: 20%;
-              animation-delay: -16s;
-            }
-
-            .shape-4 {
-              width: 120px;
-              height: 120px;
-              top: 10%;
-              right: 30%;
-              animation-delay: -24s;
-            }
-
-            @keyframes float {
-              0% {
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.08;
-              }
-              50% {
-                transform: translateY(-30px) rotate(180deg);
-                opacity: 0.15;
-              }
-              100% {
-                transform: translateY(0px) rotate(360deg);
-                opacity: 0.08;
-              }
-            }
-
-        /* Enhanced title animation with better visibility */
+        /* Enhanced title animation */
         .animate-title {
           background: linear-gradient(135deg, #ffffff 0%, #bdbdbd 50%, #ffffff 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           text-fill-color: transparent;
-
           animation: shimmer 4s ease-in-out infinite;
-
           text-shadow: 
             0 0 8px rgba(255, 255, 255, 0.3),
             0 0 12px rgba(189, 189, 189, 0.15);
-
           position: relative;
           z-index: 10;
         }
-
 
         @keyframes shimmer {
           0%, 100% { 
@@ -323,22 +396,21 @@ export default function AboutSection() {
 
         /* Navigation buttons */
         .nav-button {
-            background: linear-gradient(135deg, #2c2c2c, #4a4a4a); /* dark to lighter gray */
-            backdrop-filter: blur(10px);
-            border: 2px solid #6e6e6e; /* medium gray border */
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* dark gray/black shadow */
-          }
+          background: linear-gradient(135deg, #2c2c2c, #4a4a4a);
+          backdrop-filter: blur(10px);
+          border: 2px solid #6e6e6e;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
 
-          .nav-button:hover {
-            background: linear-gradient(135deg, #6e6e6e, #2c2c2c); /* reverse gradient for hover */
-            border-color: #ffffff; /* highlight with white border */
-            transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); /* soft white glow */
-          }
+        .nav-button:hover {
+          background: linear-gradient(135deg, #6e6e6e, #2c2c2c);
+          border-color: #ffffff;
+          transform: scale(1.15) rotate(5deg);
+          box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
 
-
-        /* Detail cards for member information */
+        /* Detail cards */
         .detail-card {
           width: 280px;
           height: 160px;
@@ -348,12 +420,24 @@ export default function AboutSection() {
           overflow: hidden;
         }
 
+        /* Mobile card adjustments */
+        .mobile-card {
+          width: 100%;
+          height: auto;
+          min-height: 120px;
+          transform: none !important;
+        }
+
         .detail-card:hover {
           transform: translateY(-8px) scale(1.1) !important;
           z-index: 20;
         }
 
-        /* White radium glow effect for detail cards */
+        .mobile-card:hover {
+          transform: translateY(-4px) scale(1.02) !important;
+        }
+
+        /* Glow effects */
         .card-glow {
           position: absolute;
           top: -4px;
@@ -373,7 +457,6 @@ export default function AboutSection() {
           animation: glow-pulse 2s ease-in-out infinite;
         }
 
-        /* Main card white glow effect */
         .main-card-glow {
           position: absolute;
           top: -6px;
@@ -404,7 +487,7 @@ export default function AboutSection() {
           }
         }
 
-        /* Card frame effect */
+        /* Card frame effects */
         .card-frame {
           position: absolute;
           top: -2px;
@@ -413,7 +496,7 @@ export default function AboutSection() {
           bottom: -2px;
           border: 3px solid transparent;
           border-radius: 16px;
-          background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange), var(--accent-yellow)) border-box;
+          background: linear-gradient(135deg, var(--light-gray), var(--gray-300), var(--dark-gray)) border-box;
           -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
           -webkit-mask-composite: destination-out;
           mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
@@ -427,7 +510,6 @@ export default function AboutSection() {
           opacity: 1;
         }
 
-        /* Main card frame */
         .main-card-frame {
           position: absolute;
           top: -3px;
@@ -436,7 +518,7 @@ export default function AboutSection() {
           bottom: -3px;
           border: 4px solid transparent;
           border-radius: 20px;
-          background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange), var(--accent-yellow)) border-box;
+          background: linear-gradient(135deg, var(--light-gray), var(--gray-300), var(--dark-gray)) border-box;
           -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
           -webkit-mask-composite: destination-out;
           mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
@@ -450,15 +532,15 @@ export default function AboutSection() {
           opacity: 1;
         }
 
-        /* Card backgrounds with brown theme */
+        /* Card backgrounds */
         .detail-bg {
           width: 100%;
           height: 100%;
           position: absolute;
           background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.9) 0%,     /* White */
-            rgba(128, 128, 128, 0.8) 50%,    /* Medium Grey */
-            rgba(0, 0, 0, 0.9) 100%          /* Black */
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(128, 128, 128, 0.8) 50%,
+            rgba(0, 0, 0, 0.9) 100%
           );
           border-radius: 16px;
           box-shadow: 
@@ -469,7 +551,6 @@ export default function AboutSection() {
           -webkit-backdrop-filter: blur(10px);
           z-index: 2;
         }
-
 
         .detail-content {
           position: relative;
@@ -484,13 +565,12 @@ export default function AboutSection() {
         .detail-title {
           font-size: 0.8rem;
           font-weight: 800;
-          color: #e0e0e0; /* very light grey */
+          color: #e0e0e0;
           text-transform: uppercase;
           letter-spacing: 2px;
           margin-bottom: 16px;
           text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
         }
-
 
         .detail-info {
           flex: 1;
@@ -502,45 +582,44 @@ export default function AboutSection() {
         }
 
         .skill-tag {
-            background: linear-gradient(135deg, rgba(230,230,230,0.8), rgba(180,180,180,0.6)); /* light to mid grey */
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 2px 0;
-            display: inline-block;
-            border: 1px solid rgba(150,150,150,0.5); /* subtle grey border */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-            color: #111; /* near black text for contrast */
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-          }
+          background: linear-gradient(135deg, rgba(230,230,230,0.8), rgba(180,180,180,0.6));
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          margin: 2px 0;
+          display: inline-block;
+          border: 1px solid rgba(150,150,150,0.5);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+          color: #111;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
 
-          .skill-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(100, 100, 100, 0.5); /* subtle grey shadow on hover */
-          }
+        .skill-tag:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(100, 100, 100, 0.5);
+        }
 
-          .experience-text, .projects-text {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #ddd; /* very light grey */
-            text-align: left;
-            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
-          }
+        .experience-text, .projects-text {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #ddd;
+          text-align: left;
+          text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        }
 
-          .description-text {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            text-align: left;
-            color: #e0e0e0; /* light grey */
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-          }
+        .description-text {
+          font-size: 0.85rem;
+          line-height: 1.5;
+          text-align: left;
+          color: #e0e0e0;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
 
-
-        /* Main featured card */
+        /* Main creator card */
         .creator-card {
           position: relative;
           cursor: pointer;
@@ -548,27 +627,22 @@ export default function AboutSection() {
           transition: transform 0.1s ease-out;
         }
 
-        .creator-card:hover .naruto::after {
-            filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)); /* white glow on hover */
-          }
-
-          .bg {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            background: linear-gradient(135deg, 
-              var(--dark-gray) 0%, 
-              var(--light-gray) 50%, 
-              var(--dark-gray) 100%
-            );
-            border-radius: 16px;
-            box-shadow: 
-              0 20px 60px rgba(0, 0, 0, 0.8),      /* strong black shadow for depth */
-              0 0 0 1px rgba(200, 200, 200, 0.15);  /* subtle light gray border */
-            transform-style: preserve-3d;
-            z-index: 2;
-          }
-
+        .bg {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          background: linear-gradient(135deg, 
+            var(--dark-gray) 0%, 
+            var(--light-gray) 50%, 
+            var(--dark-gray) 100%
+          );
+          border-radius: 16px;
+          box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.8),
+            0 0 0 1px rgba(200, 200, 200, 0.15);
+          transform-style: preserve-3d;
+          z-index: 2;
+        }
 
         .card-bg-image {
           position: absolute;
@@ -642,80 +716,76 @@ export default function AboutSection() {
           opacity: 0.9;
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 1024px) {
-          .detail-card {
-            width: 240px;
-            height: 140px;
-          }
-          
-          .detail-content {
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
+          .mobile-card .detail-content {
             padding: 16px;
           }
           
-          .experience-text, .projects-text {
-            font-size: 1.5rem;
-          }
-
-          /* Stack cards vertically on tablet */
-          .container > div {
-            position: relative !important;
+          .mobile-card .detail-title {
+            font-size: 0.75rem;
+            margin-bottom: 12px;
           }
           
-          .absolute {
-            position: relative !important;
-            left: auto !important;
-            right: auto !important;
-            top: auto !important;
-            transform: none !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .detail-card {
-            width: 220px;
-            height: 120px;
-          }
-          
-          .detail-content {
-            padding: 14px;
-          }
-          
-          .skill-tag {
+          .mobile-card .skill-tag {
             font-size: 0.75rem;
             padding: 4px 10px;
           }
           
-          .description-text {
+          .mobile-card .description-text {
             font-size: 0.8rem;
             line-height: 1.4;
           }
-
-          .experience-text, .projects-text {
-            font-size: 1.3rem;
+          
+          .mobile-card .experience-text, 
+          .mobile-card .projects-text {
+            font-size: 1.4rem;
           }
-
-          .detail-title {
-            font-size: 0.75rem;
-            margin-bottom: 12px;
-          }
-
+          
           .card-info h3 {
             font-size: 1.4rem;
           }
-
+          
           .card-info p {
             font-size: 0.9rem;
           }
-
-          /* Mobile layout adjustments */
-          .container {
-            max-width: 100%;
+          
+          /* Disable 3D transforms on mobile for performance */
+          .creator-card {
+            transform: none !important;
           }
+          
+          .naruto {
+            transform: none !important;
+          }
+        }
 
-          .relative.flex {
-            flex-direction: column;
-            gap: 2rem;
+        /* Samsung Galaxy S8+ specific (360x740px) */
+        @media (max-width: 360px) {
+          .container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
+          
+          .w-72 {
+            width: 16rem; /* 256px */
+          }
+          
+          .h-80 {
+            height: 18rem; /* 288px */
+          }
+          
+          .mobile-card {
+            min-height: 100px;
+          }
+          
+          .mobile-card .detail-content {
+            padding: 12px;
+          }
+          
+          .mobile-card .experience-text, 
+          .mobile-card .projects-text {
+            font-size: 1.2rem;
           }
         }
       `}</style>

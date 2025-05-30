@@ -32,7 +32,7 @@ export default function Sidebar() {
       {/* Toggle Button */}
       <div
         id="toggleBtn"
-        className="fixed left-0 top-1/2 -translate-y-1/2 bg-[#2c2c2e] hover:bg-yellow-500 text-white w-10 h-24 rounded-r-xl flex items-center justify-center cursor-pointer z-50 animate-pulse hover:animate-none group"
+        className="fixed left-0 top-1/2 -translate-y-1/2 bg-[#2c2c2e] hover:bg-yellow-500 text-white w-8 h-20 rounded-r-xl flex items-center justify-center cursor-pointer z-50 animate-pulse hover:animate-none group sm:w-10 sm:h-24"
         onClick={() => setIsOpen(!isOpen)}
         title="Click to open/close menu"
       >
@@ -45,7 +45,7 @@ export default function Sidebar() {
       {isOpen && (
         <div
           id="sidebar"
-          className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-32 py-4 rounded-xl shadow-xl z-40"
+          className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-24 sm:w-28 md:w-32 py-4 rounded-xl shadow-xl z-40"
         >
           <ul className="space-y-4 text-sm px-4">
             <li
