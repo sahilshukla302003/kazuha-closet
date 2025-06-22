@@ -68,6 +68,12 @@ export default function Sidebar() {
             </li>
             <li
               className="hover:text-yellow-400 cursor-pointer py-1"
+              onClick={() => scrollToSection('wallpapers')}
+            >
+              Wallpapers
+            </li>
+            <li
+              className="hover:text-yellow-400 cursor-pointer py-1"
               onClick={() => scrollToSection('contact')}
             >
               Contact

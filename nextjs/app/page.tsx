@@ -6,10 +6,11 @@ import PromoCard from '../components/Landingpage/PromoCard';
 import ProductShowcase from '../components/Landingpage/ProductShowcase';
 import AboutSection from '../components/Landingpage/AboutSection';
 import ContactSection from '../components/Landingpage/ContactSection';
+import Wallpaper from '../components/Landingpage/wallpaper';
 
 export default function Home() {
   return (
-    <main className="relative bg-gradient-to-bl from-[#000000] to-[#a3a3a3] min-h-screen scroll-smooth">
+    <main className="relative bg-gradient-to-bl from-black via-zinc-800 to-zinc-300 min-h-screen scroll-smooth overflow-x-hidden">
       <Sidebar />
 
       {/* Home Section */}
@@ -19,17 +20,33 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products">
+      <section id="products" className="pt-2 md:pt-10">
         <ProductShowcase />
       </section>
 
       {/* About Section */}
-      <section id="about" className="flex justify-center items-center h-screen">
+      <section
+        id="about"
+        className="pt-2 md:pt-10 px-4 mb-[-6px]"
+      >
         <AboutSection />
       </section>
 
-      {/* Contact Section */}
-      <ContactSection />
+      {/* Wallpapers Section */}
+      <section
+        id="wallpapers"
+        className="mt-[-64px] md:mt-[-96px]"
+      >
+        <Wallpaper />
+      </section>
+
+      {/* Contact Section - more gap from Wallpapers on desktop only */}
+      <section
+        id="contact"
+        className="mt-6 md:mt-20"
+      >
+        <ContactSection />
+      </section>
     </main>
   );
 }
