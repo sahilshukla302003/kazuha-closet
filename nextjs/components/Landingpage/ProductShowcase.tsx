@@ -77,7 +77,7 @@ const ProductShowcase = () => {
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div className="absolute top-4 right-4 z-20">
-        <Link href="/Products">
+        <Link href="/allproducts">
           <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-3 text-xs sm:text-sm rounded-full shadow-lg transition-transform duration-300 hover:scale-105">
             View All
           </button>
