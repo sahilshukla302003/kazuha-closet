@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+// Wallpaper URLs by category
 const wallpapers = {
   naruto: Array.from({ length: 15 }, (_, i) => `/wallpapers/naruto/n${i + 1}.jpg`),
   demonslayer: Array.from({ length: 15 }, (_, i) => `/wallpapers/demonslayer/ds${i + 1}.jpg`),
@@ -11,7 +12,8 @@ const wallpapers = {
   onepiece: Array.from({ length: 15 }, (_, i) => `/wallpapers/onepiece/op${i + 1}.jpg`),
 };
 
-const categories = [
+// Explicitly typed categories
+const categories: { key: keyof typeof wallpapers | "all"; label: string }[] = [
   { key: "all", label: "All" },
   { key: "naruto", label: "Naruto" },
   { key: "demonslayer", label: "Demon Slayer" },
@@ -134,7 +136,7 @@ export default function WallpapersPage() {
                   ? "bg-white text-black border-white"
                   : "bg-zinc-800 text-white border-white/20 hover:bg-white hover:text-black"
               }`}
-              onClick={() => setSelectedCategory(key as any)}
+              onClick={() => setSelectedCategory(key)}
             >
               {label}
             </button>
