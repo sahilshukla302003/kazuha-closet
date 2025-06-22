@@ -21,6 +21,7 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    'product',
     'rest_framework',
     'home',
     'corsheaders',

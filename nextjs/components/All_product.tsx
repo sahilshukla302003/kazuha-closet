@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Navbar from "../../components/Landingpage/Navbar";
+import { useRouter } from "next/navigation"; // For Next.js routing
 import { Search, Grid, List, Heart, ShoppingCart, Star, Eye, SlidersHorizontal } from "lucide-react";
+import Navbar from "./Landingpage/Navbar";
 
 type Product = {
-    id: number;
+    id: string;
     name: string;
     price: string;
     originalPrice?: string;
@@ -23,7 +24,7 @@ type Product = {
 
 const products: Product[] = [
     {
-        id: 1,
+        id: "naruto-tee-001",
         name: "Naruto Tee",
         price: "₹599",
         originalPrice: "₹799",
@@ -38,7 +39,7 @@ const products: Product[] = [
         tags: ["anime", "naruto", "cotton", "comfortable"]
     },
     {
-        id: 2,
+        id: "luffy-tee-002",
         name: "Luffy Tee",
         price: "₹649",
         type: "video",
@@ -52,7 +53,7 @@ const products: Product[] = [
         tags: ["anime", "one piece", "luffy", "breathable"]
     },
     {
-        id: 3,
+        id: "sasuke-tee-003",
         name: "Sasuke Tee",
         price: "₹699",
         type: "video",
@@ -65,7 +66,7 @@ const products: Product[] = [
         tags: ["anime", "sasuke", "ninja", "stylish"]
     },
     {
-        id: 4,
+        id: "goku-tee-004",
         name: "Goku Tee",
         price: "₹499",
         originalPrice: "₹649",
@@ -81,7 +82,7 @@ const products: Product[] = [
         tags: ["anime", "goku", "dragon ball", "classic"]
     },
     {
-        id: 5,
+        id: "zoro-tee-005",
         name: "Zoro Tee",
         price: "₹549",
         type: "image",
@@ -95,7 +96,7 @@ const products: Product[] = [
         tags: ["anime", "zoro", "one piece", "detailed"]
     },
     {
-        id: 6,
+        id: "gojo-tee-006",
         name: "Gojo Tee",
         price: "₹799",
         type: "image",
@@ -120,14 +121,30 @@ const sortOptions = [
     { value: "name", label: "Name A-Z" }
 ];
 
-const AllProductsPage = () => {
+export const All_product = () => {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [sortBy, setSortBy] = useState("default");
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [showFilters, setShowFilters] = useState(false);
     const [priceRange, setPriceRange] = useState([0, 1000]);
-    const [wishlist, setWishlist] = useState<number[]>([]);
+    const [wishlist, setWishlist] = useState<string[]>([]);
+
+    // Navigation functions
+    const navigateToProduct = (productId: string) => {
+        localStorage.setItem("productid",productId);
+        router.push(`/product_page/`);
+    };
+
+    const handleQuickView = (e: React.MouseEvent, productId: string) => {
+        e.stopPropagation(); 
+        navigateToProduct(productId);
+    };
+
+    const handleImageClick = (productId: string) => {
+        navigateToProduct(productId);
+    };
 
     // Filter and sort products
     const filteredAndSortedProducts = useMemo(() => {
@@ -165,7 +182,8 @@ const AllProductsPage = () => {
         return filtered;
     }, [searchTerm, selectedCategory, sortBy, priceRange]);
 
-    const toggleWishlist = (productId: number) => {
+    const toggleWishlist = (e: React.MouseEvent, productId: string) => {
+        e.stopPropagation(); // Prevent navigating when clicking wishlist
         setWishlist(prev => 
             prev.includes(productId) 
                 ? prev.filter(id => id !== productId)
@@ -184,7 +202,7 @@ const AllProductsPage = () => {
 
     return (
         <main className="relative bg-gradient-to-bl from-[#000000] to-[#a3a3a3] min-h-screen scroll-smooth text-white">
-            <Navbar />
+            <Navbar/>
             
             {/* Header Section */}
             <div className="pt-24 pb-8 px-4 sm:px-6">
@@ -314,8 +332,9 @@ const AllProductsPage = () => {
                         {filteredAndSortedProducts.map((product) => (
                             <div
                                 key={product.id}
-                                className={`group relative bg-black/30 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl overflow-hidden hover:border-white/40 hover:bg-black/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-white/30 ${
-                                    viewMode === "list" ? "flex gap-4 sm:gap-6 p-4 sm:p-8" : "p-3 sm:p-6 lg:p-8"
+                                onClick={() => handleImageClick(product.id)}
+                                className={`group relative bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:border-white/40 hover:bg-black/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-white/30 cursor-pointer ${
+                                    viewMode === "list" ? "flex gap-6 p-8 max-w-full" : "p-8 w-full max-w-sm mx-auto"
                                 }`}
                             >
                                 {/* Product Image/Video */}
@@ -369,8 +388,8 @@ const AllProductsPage = () => {
 
                                     {/* Wishlist Button */}
                                     <button
-                                        onClick={() => toggleWishlist(product.id)}
-                                        className="absolute top-2 right-2 p-1.5 bg-black/70 backdrop-blur-md rounded-full hover:bg-black/50 border border-white/30 hover:border-white/50 hover:shadow-lg hover:shadow-white/20 transition-all"
+                                        onClick={(e) => toggleWishlist(e, product.id)}
+                                        className="absolute top-3 right-3 p-2 bg-black/70 backdrop-blur-md rounded-full hover:bg-black/50 border border-white/30 hover:border-white/50 hover:shadow-lg hover:shadow-white/20 transition-all"
                                     >
                                         <Heart
                                             className={`w-3 h-3 sm:w-4 sm:h-4 ${
@@ -381,10 +400,13 @@ const AllProductsPage = () => {
                                         />
                                     </button>
 
-                                    {/* Quick View - Hidden on mobile */}
-                                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center hidden sm:flex">
-                                        <button className="bg-white/20 backdrop-blur-xl text-white px-4 py-2 rounded-full hover:bg-white/30 hover:shadow-lg hover:shadow-white/30 transition-all flex items-center gap-2 border border-white/30 text-sm">
-                                            <Eye className="w-3 h-3" />
+                                    {/* Quick View */}
+                                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                        <button 
+                                            onClick={(e) => handleQuickView(e, product.id)}
+                                            className="bg-white/20 backdrop-blur-xl text-white px-6 py-3 rounded-full hover:bg-white/30 hover:shadow-lg hover:shadow-white/30 transition-all flex items-center gap-2 border border-white/30"
+                                        >
+                                            <Eye className="w-4 h-4" />
                                             Quick View
                                         </button>
                                     </div>
@@ -441,6 +463,11 @@ const AllProductsPage = () => {
                                     {/* Action Buttons */}
                                     <div className={`flex gap-2 sm:gap-4 ${viewMode === "grid" ? "flex-col sm:flex-row" : ""}`}>
                                         <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // Handle add to cart
+                                                console.log(`Added ${product.name} to cart`);
+                                            }}
                                             disabled={!product.inStock}
                                             className={`flex-1 py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${
                                                 product.inStock
@@ -451,7 +478,13 @@ const AllProductsPage = () => {
                                             <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                                             {product.inStock ? (viewMode === "grid" ? "Add" : "Add to Cart") : "Out of Stock"}
                                         </button>
-                                        <button className={`px-3 sm:px-6 py-2 sm:py-3 bg-black/50 backdrop-blur-md hover:bg-black/30 text-white rounded-lg sm:rounded-xl transition-all border border-white/30 hover:border-white/50 hover:shadow-md hover:shadow-white/20 text-xs sm:text-sm ${viewMode === "grid" ? "hidden sm:block" : ""}`}>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigateToProduct(product.id);
+                                            }}
+                                            className="px-6 py-3 bg-black/50 backdrop-blur-md hover:bg-black/30 text-white rounded-xl transition-all border border-white/30 hover:border-white/50 hover:shadow-md hover:shadow-white/20"
+                                        >
                                             Details
                                         </button>
                                     </div>
@@ -476,4 +509,3 @@ const AllProductsPage = () => {
     );
 };
 
-export default AllProductsPage;
