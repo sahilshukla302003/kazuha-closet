@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {  ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Link from 'next/link';
 
 type Product = {
@@ -10,6 +10,7 @@ type Product = {
   media: string;
   subtitle: string;
   description?: string;
+  rating?: number;
 };
 
 const products: Product[] = [
@@ -18,27 +19,30 @@ const products: Product[] = [
     name: "Naruto Tee",
     subtitle: "Sage Mode Series",
     price: "₹599",
-    type: "video",
-    media: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2732_1440_25fps.mp4",
-    description: "Premium quality t-shirt featuring Naruto in Sage Mode. Made with 100% cotton for maximum comfort."
+    type: "image",
+    media: "Productimage/GIYU/1.png",
+    description: "Premium quality t-shirt featuring Naruto in Sage Mode. Made with 100% cotton for maximum comfort.",
+    rating: 4.8
   },
   {
     id: 2,
     name: "Luffy Tee",
     subtitle: "Straw Hat Pirates",
     price: "₹649",
-    type: "video", 
-    media: "https://videos.pexels.com/video-files/3209828/3209828-uhd_2732_1440_25fps.mp4",
-    description: "Join the Straw Hat crew with this awesome Luffy design. High-quality print on soft cotton fabric."
+    type: "image", 
+    media: "Productimage/ITACHI/1.png",
+    description: "Join the Straw Hat crew with this awesome Luffy design. High-quality print on soft cotton fabric.",
+    rating: 4.9
   },
   {
     id: 3,
     name: "Sasuke Tee",
     subtitle: "Uchiha Legacy",
     price: "₹699",
-    type: "video",
-    media: "https://videos.pexels.com/video-files/3394651/3394651-uhd_2732_1440_25fps.mp4",
-    description: "Embrace the power of the Uchiha clan with this premium Sasuke t-shirt. Perfect for anime fans."
+    type: "image",
+    media: "Productimage/RENGOKU/1.png",
+    description: "Embrace the power of the Uchiha clan with this premium Sasuke t-shirt. Perfect for anime fans.",
+    rating: 4.7
   },
 ];
 
@@ -74,11 +78,25 @@ const ProductShowcase = () => {
     setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
   };
 
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        size={12}
+        className={`${
+          i < Math.floor(rating) 
+            ? "fill-yellow-400 text-yellow-400" 
+            : "text-gray-400"
+        }`}
+      />
+    ));
+  };
+
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div className="absolute top-4 right-4 z-20">
         <Link href="/Products">
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-3 text-xs sm:text-sm rounded-full shadow-lg transition-transform duration-300 hover:scale-105">
+          <button className="bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold py-2 px-3 text-xs sm:text-sm rounded-full shadow-lg transition-all duration-300 hover:scale-105">
             View All
           </button>
         </Link>
@@ -116,7 +134,7 @@ const ProductShowcase = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                 FEATURED PRODUCTS
               </h2>
-              <div className="w-16 h-1 bg-gradient-to-r from-yellow-400 to-purple-400 mx-auto mb-4"></div>
+              <div className="w-16 h-1 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 mx-auto mb-4"></div>
               <p className="text-gray-300 text-sm">
                 <span className="md:hidden">Navigate through our collection</span>
                 <span className="hidden md:inline">Swipe to explore our collection</span>
@@ -172,17 +190,24 @@ const ProductShowcase = () => {
                           {products[currentIndex].subtitle}
                         </p>
                       </div>
+                      
                       <div className="flex items-center justify-between mb-4">
                         <div className="text-yellow-400 text-xl sm:text-2xl font-bold">
                           {products[currentIndex].price}
                         </div>
+                        <div className="flex items-center gap-1">
+                          {renderStars(products[currentIndex].rating || 0)}
+                          <span className="text-gray-300 text-sm ml-1">
+                            {products[currentIndex].rating}
+                          </span>
+                        </div>
                       </div>
-                      <button 
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-full px-4 py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-bold rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
-                      >
-                        Add to Cart
-                      </button>
+
+                      <div className="flex justify-center">
+                        <button className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                          <span className="text-sm">Quick View</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -247,17 +272,24 @@ const ProductShowcase = () => {
                               {product.subtitle}
                             </p>
                           </div>
+                          
                           <div className="flex items-center justify-between mb-3">
                             <div className="text-yellow-400 text-xl font-bold">
                               {product.price}
                             </div>
+                            <div className="flex items-center gap-1">
+                              {renderStars(product.rating || 0)}
+                              <span className="text-gray-300 text-sm ml-1">
+                                {product.rating}
+                              </span>
+                            </div>
                           </div>
-                          <button 
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full px-4 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-bold rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
-                          >
-                            Add to Cart
-                          </button>
+
+                          <div className="flex justify-center">
+                            <button className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                              <span className="text-sm">Quick View</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
