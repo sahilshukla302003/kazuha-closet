@@ -1,9 +1,9 @@
-import Product_Page from '@/components/Product_page'
+import ProductPage from '@/components/Productpage'
 import React from 'react'
 
 function page() {
   return (
-    <div><Product_Page/></div>
+    <div><ProductPage/></div>
   )
 }
 

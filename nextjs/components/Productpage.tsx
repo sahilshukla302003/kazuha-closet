@@ -25,7 +25,7 @@ type Product = {
   specifications: { [key: string]: string };
 };
 
-export default function Product_Page() {
+export default function ProductPage() {
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
