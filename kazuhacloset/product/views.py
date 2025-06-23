@@ -17,6 +17,7 @@ class ProductDetailView(APIView):
     def get(self, request, id):
         try:
             product = product_collection.find_one({"id": str(id)})
+            print(product)
             if not product:
                 return Response({"error": "Product not found"}, status=404)
             product["_id"] = str(product["_id"])
