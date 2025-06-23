@@ -23,7 +23,14 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // New state for search query
+
+  // Corrected spelling of HTMLDivElement for dropdownRef
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // mobileSearchRef needs to be HTMLFormElement because it's for a <form>
+  const mobileSearchRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -35,6 +42,10 @@ export default function Navbar() {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
+      }
+      // Check if click is outside mobile search form/div
+      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
+        setMobileSearchOpen(false);
       }
     };
 
@@ -66,6 +77,22 @@ export default function Navbar() {
     window.location.href = '/';
   };
 
+  // Function to handle search input changes
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Function to handle search submission (e.g., when pressing Enter or clicking a search button)
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+    if (searchQuery.trim()) {
+      // Navigate to a search results page with the query
+      window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+      // Close mobile search bar if open after search
+      setMobileSearchOpen(false);
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 z-50 w-full px-4 sm:px-6 md:px-10 transition-all duration-500 flex items-center justify-between ${
@@ -83,9 +110,10 @@ export default function Navbar() {
         </div>
       </Link>
 
-      {/* Search - hide on very small screens */}
-      <div className="hidden sm:flex items-center bg-white/80 rounded-full px-4 py-2 w-1/2 md:w-1/3 backdrop-blur-sm shadow-inner">
-        <button className="text-gray-600 mr-2" aria-label="Search Icon">
+      {/* Desktop Search */}
+      {/* Wrap in <form> for submission handling */}
+      <form onSubmit={handleSearchSubmit} className="hidden sm:flex items-center bg-white/80 rounded-full px-4 py-2 w-1/2 md:w-1/3 backdrop-blur-sm shadow-inner">
+        <button type="submit" className="text-gray-600 mr-2" aria-label="Search Icon">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" stroke="currentColor">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -95,8 +123,76 @@ export default function Navbar() {
           type="text"
           placeholder="Search"
           className="bg-transparent outline-none text-sm w-full text-black placeholder-gray-500"
+          value={searchQuery} // Controlled component
+          onChange={handleSearchChange} // Handle input changes
         />
+      </form>
+
+      {/* Mobile Icons (Search, Orders, Hamburger) */}
+      <div className="sm:hidden flex items-center space-x-4">
+        {/* Mobile Search Icon */}
+        <button
+          className="text-white flex items-center justify-center w-6 h-6"
+          aria-label="Search"
+          onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+
+        {/* Mobile Orders Icon */}
+        <Link href="/orders" aria-label="Orders">
+          <div className="text-white hover:text-green-400 transition-transform duration-300 cursor-pointer flex items-center justify-center w-6 h-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+        </Link>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="text-white cursor-pointer focus:outline-none flex items-center justify-center w-6 h-6"
+          aria-label="Open Menu"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {/* Mobile Search Bar (appears when icon is clicked) */}
+      {mobileSearchOpen && (
+        // Wrap in <form> and assign ref
+        <form onSubmit={handleSearchSubmit} ref={mobileSearchRef} className="absolute top-full left-0 w-full px-4 py-2 bg-black/90 backdrop-blur-md shadow-md sm:hidden">
+          <div className="flex items-center bg-white/90 rounded-full px-4 py-2">
+            <button type="submit" className="text-gray-600 mr-2" aria-label="Search Icon">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-transparent outline-none text-sm w-full text-black placeholder-gray-500"
+              value={searchQuery} // Controlled component
+              onChange={handleSearchChange} // Handle input changes
+            />
+          </div>
+        </form>
+      )}
 
       {/* Desktop Right Icons */}
       <div className="hidden sm:flex items-center space-x-6 text-white text-xl sm:text-2xl relative">
@@ -109,6 +205,15 @@ export default function Navbar() {
                 strokeLinejoin="round"
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.35 2.7a1 1 0 00.9 1.3h12.3M16 16a1 1 0 11-2 0 1 1 0 012 0zm-8 0a1 1 0 11-2 0 1 1 0 012 0z"
               />
+            </svg>
+          </div>
+        </Link>
+
+        {/* Orders Icon */}
+        <Link href="/orders" aria-label="Orders">
+          <div className="hover:scale-125 transition-transform duration-300 hover:text-green-400 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
           </div>
         </Link>
@@ -211,26 +316,6 @@ export default function Navbar() {
           </svg>
         </div>
       </div>
-
-      {/* Mobile Hamburger */}
-      <button
-        className="sm:hidden flex items-center justify-center text-white text-2xl cursor-pointer focus:outline-none"
-        aria-label="Open Menu"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        {menuOpen ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        )}
-      </button>
 
       {/* Mobile menu dropdown */}
       {menuOpen && (
