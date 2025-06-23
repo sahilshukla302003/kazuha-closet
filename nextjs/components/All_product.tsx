@@ -205,20 +205,20 @@ export const All_product = () => {
             <Navbar/>
             
             {/* Header Section */}
-            <div className="pt-24 pb-8 px-4 sm:px-6">
+            <div className="pt-24 pb-8 px-3 sm:px-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white">
+                        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white">
                             PREMIUM ANIME COLLECTION
                         </h1>
-                        <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
+                        <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-2">
                             Discover our exclusive range of high-quality anime T-shirts crafted for true fans
                         </p>
                     </div>
 
                     {/* Search and Filters */}
-                    <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all duration-500">
-                        <div className="flex flex-col gap-4">
+                    <div className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-3 sm:p-6 mb-6 sm:mb-8 shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all duration-500">
+                        <div className="flex flex-col gap-3 sm:gap-4">
                             {/* Search Bar */}
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
@@ -232,12 +232,12 @@ export const All_product = () => {
                             </div>
 
                             {/* Category Filter */}
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                 {categories.map(category => (
                                     <button
                                         key={category}
                                         onClick={() => setSelectedCategory(category)}
-                                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 font-medium backdrop-blur-md text-xs sm:text-sm ${
+                                        className={`px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 font-medium backdrop-blur-md text-xs sm:text-sm ${
                                             selectedCategory === category
                                                 ? 'bg-white/90 text-black shadow-lg shadow-white/30'
                                                 : 'bg-black/50 hover:bg-black/30 text-white border border-white/30 hover:border-white/50 hover:shadow-md hover:shadow-white/20'
@@ -249,11 +249,11 @@ export const All_product = () => {
                             </div>
 
                             {/* Controls */}
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center justify-between gap-3 sm:gap-4">
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="bg-black/60 backdrop-blur-md border border-white/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-white focus:bg-black/40 focus:shadow-lg focus:shadow-white/20 transition-all text-xs sm:text-sm"
+                                    className="bg-black/60 backdrop-blur-md border border-white/30 rounded-xl px-2.5 py-2 sm:px-3 text-white focus:outline-none focus:border-white focus:bg-black/40 focus:shadow-lg focus:shadow-white/20 transition-all text-xs sm:text-sm flex-1 sm:flex-none"
                                 >
                                     {sortOptions.map(option => (
                                         <option key={option.value} value={option.value} className="bg-black text-white">
@@ -298,7 +298,7 @@ export const All_product = () => {
                                 <div className="grid grid-cols-1 gap-4 sm:gap-6">
                                     <div>
                                         <label className="block text-white mb-2 font-semibold text-sm sm:text-base">Price Range</label>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-3 sm:gap-4">
                                             <input
                                                 type="range"
                                                 min="0"
@@ -307,7 +307,7 @@ export const All_product = () => {
                                                 onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                                                 className="flex-1 accent-white"
                                             />
-                                            <span className="text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/30 shadow-md shadow-white/10 text-xs sm:text-sm">
+                                            <span className="text-white bg-black/60 backdrop-blur-md px-2.5 py-1 sm:px-3 rounded-lg border border-white/30 shadow-md shadow-white/10 text-xs sm:text-sm">
                                                 ₹{priceRange[0]} - ₹{priceRange[1]}
                                             </span>
                                         </div>
@@ -318,7 +318,7 @@ export const All_product = () => {
                     </div>
 
                     {/* Results Count */}
-                    <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <div className="flex justify-between items-center mb-4 sm:mb-6 px-1">
                         <p className="text-gray-400 text-sm sm:text-base">
                             Showing {filteredAndSortedProducts.length} of {products.length} products
                         </p>
@@ -326,7 +326,7 @@ export const All_product = () => {
 
                     {/* Products Grid/List */}
                     <div className={viewMode === "grid" 
-                        ? "grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8"
+                        ? "grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6 lg:gap-8"
                         : "space-y-4 sm:space-y-6"
                     }>
                         {filteredAndSortedProducts.map((product) => (
@@ -334,12 +334,16 @@ export const All_product = () => {
                                 key={product.id}
                                 onClick={() => handleImageClick(product.id)}
                                 className={`group relative bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:border-white/40 hover:bg-black/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-white/30 cursor-pointer ${
-                                    viewMode === "list" ? "flex gap-6 p-8 max-w-full" : "p-8 w-full max-w-sm mx-auto"
+                                    viewMode === "list" 
+                                        ? "flex gap-4 sm:gap-6 p-4 sm:p-8 max-w-full" 
+                                        : "p-2 sm:p-8 w-full"
                                 }`}
                             >
                                 {/* Product Image/Video */}
                                 <div className={`relative overflow-hidden rounded-lg sm:rounded-xl bg-black/40 backdrop-blur-md border border-white/20 ${
-                                    viewMode === "list" ? "w-32 h-32 sm:w-56 sm:h-56 flex-shrink-0" : "w-full h-32 sm:h-48 lg:h-80 mb-3 sm:mb-4 lg:mb-6"
+                                    viewMode === "list" 
+                                        ? "w-24 h-24 sm:w-56 sm:h-56 flex-shrink-0" 
+                                        : "w-full h-32 sm:h-48 lg:h-80 mb-2 sm:mb-4 lg:mb-6"
                                 }`}>
                                     {product.type === "video" ? (
                                         <video
@@ -368,19 +372,19 @@ export const All_product = () => {
                                     )}
                                     
                                     {/* Badges */}
-                                    <div className="absolute top-2 left-2 flex flex-col gap-1">
+                                    <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col gap-1">
                                         {product.isNew && (
-                                            <span className="bg-white/95 backdrop-blur-md text-black px-2 py-0.5 rounded-full text-xs font-bold shadow-lg shadow-white/30">
+                                            <span className="bg-white/95 backdrop-blur-md text-black px-1.5 py-0.5 sm:px-2 rounded-full text-xs font-bold shadow-lg shadow-white/30">
                                                 NEW
                                             </span>
                                         )}
                                         {product.isSale && (
-                                            <span className="bg-black/90 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-xs font-bold border border-white/30 shadow-lg shadow-black/50">
+                                            <span className="bg-black/90 backdrop-blur-md text-white px-1.5 py-0.5 sm:px-2 rounded-full text-xs font-bold border border-white/30 shadow-lg shadow-black/50">
                                                 50% OFF
                                             </span>
                                         )}
                                         {!product.inStock && (
-                                            <span className="bg-gray-500/90 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
+                                            <span className="bg-gray-500/90 backdrop-blur-md text-white px-1.5 py-0.5 sm:px-2 rounded-full text-xs font-bold shadow-lg">
                                                 OUT OF STOCK
                                             </span>
                                         )}
@@ -389,7 +393,7 @@ export const All_product = () => {
                                     {/* Wishlist Button */}
                                     <button
                                         onClick={(e) => toggleWishlist(e, product.id)}
-                                        className="absolute top-3 right-3 p-2 bg-black/70 backdrop-blur-md rounded-full hover:bg-black/50 border border-white/30 hover:border-white/50 hover:shadow-lg hover:shadow-white/20 transition-all"
+                                        className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 bg-black/70 backdrop-blur-md rounded-full hover:bg-black/50 border border-white/30 hover:border-white/50 hover:shadow-lg hover:shadow-white/20 transition-all"
                                     >
                                         <Heart
                                             className={`w-3 h-3 sm:w-4 sm:h-4 ${
@@ -400,22 +404,23 @@ export const All_product = () => {
                                         />
                                     </button>
 
-                                    {/* Quick View */}
+                                    {/* Quick View - Hidden on mobile */}
                                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                         <button 
                                             onClick={(e) => handleQuickView(e, product.id)}
-                                            className="bg-white/20 backdrop-blur-xl text-white px-6 py-3 rounded-full hover:bg-white/30 hover:shadow-lg hover:shadow-white/30 transition-all flex items-center gap-2 border border-white/30"
+                                            className="bg-white/20 backdrop-blur-xl text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full hover:bg-white/30 hover:shadow-lg hover:shadow-white/30 transition-all flex items-center gap-1 sm:gap-2 border border-white/30 text-xs sm:text-sm"
                                         >
-                                            <Eye className="w-4 h-4" />
-                                            Quick View
+                                            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                                            <span className="hidden sm:inline">Quick View</span>
+                                            <span className="sm:hidden">View</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 {/* Product Info */}
                                 <div className={viewMode === "list" ? "flex-1" : ""}>
-                                    <div className="mb-2 sm:mb-3">
-                                        <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white mb-1 group-hover:text-gray-300 transition-colors line-clamp-1">
+                                    <div className="mb-1.5 sm:mb-3">
+                                        <h3 className="text-xs sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1 group-hover:text-gray-300 transition-colors line-clamp-1">
                                             {product.name}
                                         </h3>
                                         <p className="text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2 font-medium">{product.category}</p>
@@ -431,7 +436,7 @@ export const All_product = () => {
                                         </div>
 
                                         {/* Price */}
-                                        <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                                        <div className="flex items-center gap-1 sm:gap-2 mb-1.5 sm:mb-3">
                                             <span className="text-sm sm:text-lg lg:text-2xl font-bold text-white">
                                                 {product.price}
                                             </span>
@@ -449,11 +454,11 @@ export const All_product = () => {
                                     </p>
 
                                     {/* Tags - Limited on mobile */}
-                                    <div className={`flex flex-wrap gap-1 mb-3 sm:mb-6 ${viewMode === "grid" ? "hidden sm:flex" : ""}`}>
+                                    <div className={`flex flex-wrap gap-1 mb-2 sm:mb-6 ${viewMode === "grid" ? "hidden sm:flex" : ""}`}>
                                         {product.tags.slice(0, viewMode === "grid" ? 2 : 3).map(tag => (
                                             <span
                                                 key={tag}
-                                                className="bg-black/40 backdrop-blur-md text-gray-200 px-2 py-1 rounded-full text-xs border border-white/20 shadow-sm"
+                                                className="bg-black/40 backdrop-blur-md text-gray-200 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs border border-white/20 shadow-sm"
                                             >
                                                 #{tag}
                                             </span>
@@ -461,7 +466,7 @@ export const All_product = () => {
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className={`flex gap-2 sm:gap-4 ${viewMode === "grid" ? "flex-col sm:flex-row" : ""}`}>
+                                    <div className={`flex gap-1.5 sm:gap-4 ${viewMode === "grid" ? "flex-col sm:flex-row" : ""}`}>
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -469,21 +474,21 @@ export const All_product = () => {
                                                 console.log(`Added ${product.name} to cart`);
                                             }}
                                             disabled={!product.inStock}
-                                            className={`flex-1 py-2 sm:py-3 px-3 sm:px-6 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${
+                                            className={`flex-1 py-1.5 sm:py-3 px-2 sm:px-6 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${
                                                 product.inStock
                                                     ? 'bg-white/95 backdrop-blur-md text-black hover:bg-white hover:scale-105 shadow-lg shadow-white/30 hover:shadow-xl hover:shadow-white/40'
                                                     : 'bg-gray-500/50 backdrop-blur-md text-gray-300 cursor-not-allowed border border-white/20'
                                             }`}
                                         >
                                             <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
-                                            {product.inStock ? (viewMode === "grid" ? "Add" : "Add to Cart") : "Out of Stock"}
+                                            {product.inStock ? "Add" : "Out"}
                                         </button>
                                         <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 navigateToProduct(product.id);
                                             }}
-                                            className="px-6 py-3 bg-black/50 backdrop-blur-md hover:bg-black/30 text-white rounded-xl transition-all border border-white/30 hover:border-white/50 hover:shadow-md hover:shadow-white/20"
+                                            className="px-2 sm:px-6 py-1.5 sm:py-3 bg-black/50 backdrop-blur-md hover:bg-black/30 text-white rounded-lg sm:rounded-xl transition-all border border-white/30 hover:border-white/50 hover:shadow-md hover:shadow-white/20 text-xs sm:text-sm"
                                         >
                                             Details
                                         </button>
@@ -508,4 +513,3 @@ export const All_product = () => {
         </main>
     );
 };
-

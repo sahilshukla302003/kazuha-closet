@@ -45,7 +45,8 @@ export default function Sidebar() {
       {isOpen && (
         <div
           id="sidebar"
-          className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white w-24 sm:w-28 md:w-32 py-4 rounded-xl shadow-xl z-40"
+          className="fixed top-1/2 -translate-y-1/2 left-14 bg-[#2c2c2e] text-white 
+                     w-32 sm:w-36 md:w-40 py-4 rounded-xl shadow-xl z-40"
         >
           <ul className="space-y-4 text-sm px-4">
             <li
