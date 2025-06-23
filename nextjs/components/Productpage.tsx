@@ -14,6 +14,11 @@ import {
 import { getProductDetails } from "@/utils/api/productUtils";
 import Navbar from "./Landingpage/Navbar";
 
+type ProductImage = {
+  url: string;
+  alt: string;
+};
+
 type Product = {
   id: string;
   name: string;
@@ -27,14 +32,14 @@ type Product = {
   sizes: string[];
   features: string[];
   specifications: { [key: string]: string };
+  images: ProductImage[];
 };
 
 export default function ProductPage() {
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
-  const [mainImage, setMainImage] = useState("/static-placeholder.jpg");
-  const [imageOptions, setImageOptions] = useState<string[]>(["/static-placeholder.jpg", "/static-back.jpg"]);
+  const [mainImage, setMainImage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,10 +47,12 @@ export default function ProductPage() {
       if (productId) {
         try {
           const data = await getProductDetails(productId);
+          console.log(data);
           if (data) {
             setCurrentProduct(data);
-            setMainImage("/static-placeholder.jpg");
-            setImageOptions(["/static-placeholder.jpg", "/static-back.jpg"]);
+            if (data.images && data.images.length > 0) {
+              setMainImage(data.images[0].url);
+            }
           }
         } catch (error) {
           console.error("Error fetching product data:", error);
@@ -76,7 +83,8 @@ export default function ProductPage() {
 
   const discountPercentage = Math.round(
     ((parseInt(currentProduct.originalPrice) - parseInt(currentProduct.price)) /
-      parseInt(currentProduct.originalPrice)) * 100
+      parseInt(currentProduct.originalPrice)) *
+      100
   );
 
   return (
@@ -84,6 +92,7 @@ export default function ProductPage() {
       <Navbar />
       <div className="pt-[100px] pb-10 px-3 sm:px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Image Section */}
           <div>
             <div className="rounded-2xl overflow-hidden border border-white/20 bg-black/40 backdrop-blur-md">
               <img
@@ -93,21 +102,21 @@ export default function ProductPage() {
               />
             </div>
 
-            {/* Thumbnail section with spacing & responsive smaller size */}
+            {/* Thumbnails */}
             <div className="flex flex-wrap gap-x-6 gap-y-4 mt-6 sm:mt-6 justify-center sm:justify-start">
-              {imageOptions.map((img, idx) => (
+              {currentProduct.images.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setMainImage(img)}
+                  onClick={() => setMainImage(img.url)}
                   className={`rounded-xl overflow-hidden border transition-all duration-200
                     w-[120px] h-[160px] sm:w-[180px] sm:h-[220px]
-                    ${mainImage === img
+                    ${mainImage === img.url
                       ? "border-white scale-105"
                       : "border-white/20 hover:border-white"}`}
                 >
                   <img
-                    src={img}
-                    alt={`Thumbnail ${idx + 1}`}
+                    src={img.url}
+                    alt={img.alt || `Image ${idx + 1}`}
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </button>
@@ -115,34 +124,28 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Right section */}
+          {/* Info Section */}
           <div className="space-y-5 text-sm sm:text-base">
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold">
               {currentProduct.name}
             </h1>
             <p className="text-gray-400 text-xs sm:text-sm">{currentProduct.category}</p>
+
             <div className="flex items-center gap-2">
               <div className="flex">{renderStars(currentProduct.rating)}</div>
-              <span className="text-white font-semibold text-xs sm:text-sm">
-                {currentProduct.rating}
-              </span>
+              <span className="text-white font-semibold text-xs sm:text-sm">{currentProduct.rating}</span>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xl sm:text-3xl font-bold text-white">
-                ₹{currentProduct.price}
-              </span>
-              <span className="text-sm sm:text-lg text-gray-400 line-through">
-                ₹{currentProduct.originalPrice}
-              </span>
-              <span className="text-green-400 font-semibold text-xs sm:text-base">
-                {discountPercentage}% OFF
-              </span>
-            </div>
-            <p className="text-gray-300 text-xs sm:text-base">
-              {currentProduct.description}
-            </p>
 
-            {/* Sizes */}
+            {/* Price Section */}
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-xl sm:text-3xl font-bold text-white">₹{currentProduct.price}</span>
+              <span className="text-sm sm:text-lg text-gray-400 line-through">₹{currentProduct.originalPrice}</span>
+              <span className="text-green-400 font-semibold text-xs sm:text-base">{discountPercentage}% OFF</span>
+            </div>
+
+            <p className="text-gray-300 text-xs sm:text-base">{currentProduct.description}</p>
+
+            {/* Size Selector */}
             <div>
               <h3 className="text-white font-semibold mb-2 text-sm">Select Size</h3>
               <div className="flex gap-2">
@@ -162,7 +165,7 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Quantity */}
+            {/* Quantity Selector */}
             <div>
               <h3 className="text-white font-semibold mb-2 text-sm">Quantity</h3>
               <div className="flex items-center gap-4">
@@ -183,7 +186,7 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Cart and Buy */}
+            {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">
               <button className="w-full sm:w-1/2 bg-white text-black font-bold py-2 sm:py-3 rounded-xl hover:scale-105 transition-all shadow-md text-xs sm:text-sm">
                 <ShoppingCart className="w-4 h-4 inline mr-2" />
@@ -210,7 +213,7 @@ export default function ProductPage() {
               ))}
             </div>
 
-            {/* Features */}
+            {/* Feature Icons */}
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-4 rounded-xl flex flex-col items-center text-center">
                 <Sparkles className="w-6 h-6 mb-2 text-purple-400" />
