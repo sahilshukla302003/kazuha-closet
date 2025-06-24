@@ -47,7 +47,6 @@ export default function ProductPage() {
       if (productId) {
         try {
           const data = await getProductDetails(productId);
-          console.log(data);
           if (data) {
             setCurrentProduct(data);
             if (data.images && data.images.length > 0) {
@@ -94,16 +93,16 @@ export default function ProductPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Image Section */}
           <div>
-            <div className="rounded-2xl overflow-hidden border border-white/20 bg-black/40 backdrop-blur-md">
+            <div className="mx-auto sm:mx-0 w-full sm:w-[550px] h-[500px] border border-white/20 bg-black/40 rounded-2xl overflow-hidden flex items-center justify-center">
               <img
                 src={mainImage}
                 alt={currentProduct.name}
-                className="w-full h-60 sm:h-[380px] object-cover rounded-2xl"
+                className="w-full h-full object-contain"
               />
             </div>
 
             {/* Thumbnails */}
-            <div className="flex flex-wrap gap-x-6 gap-y-4 mt-6 sm:mt-6 justify-center sm:justify-start">
+            <div className="flex flex-wrap gap-x-6 gap-y-4 mt-6 justify-center sm:justify-start">
               {currentProduct.images.map((img, idx) => (
                 <button
                   key={idx}

@@ -28,8 +28,9 @@ const products: Product[] = [
     name: "Naruto Tee",
     price: "₹599",
     originalPrice: "₹799",
-    type: "video",
-    video: "/videos/goku.mp4",
+    type: "image",
+    video: "",
+    thumbnail: "/Productimage/Naruto/front.png",
     description: "High-quality Naruto-themed T-shirt with durable print and premium cotton fabric.",
     category: "Naruto",
     rating: 4.8,
@@ -45,7 +46,7 @@ const products: Product[] = [
     originalPrice: "₹649",
     type: "image",
     video: "",
-    thumbnail: "/products/giyu-tee/front.jpg",
+    thumbnail: "/Productimage/GIYU/front.jpg",
     description: "Stylish Giyu Tomioka T-shirt",
     category: "Demon Slayer",
     rating: 4.9,
@@ -60,7 +61,7 @@ const products: Product[] = [
     originalPrice: "₹629",
     type: "image",
     video: "",
-    thumbnail: "/products/itachi-tee/front.jpg",
+    thumbnail: "/Productimage/ITACHI/front.jpg",
     description: "Elegant Itachi Uchiha design tee",
     category: "Naruto",
     rating: 4.7,
@@ -75,7 +76,7 @@ const products: Product[] = [
     originalPrice: "₹659",
     type: "image",
     video: "",
-    thumbnail: "/products/rengoku-tee/front.jpg",
+    thumbnail: "/Productimage/RENGOKU/back.jpg",
     description: "Fiery Rengoku Flame Hashira tee",
     category: "Demon Slayer",
     rating: 4.9,
@@ -90,7 +91,7 @@ const products: Product[] = [
     originalPrice: "₹619",
     type: "image",
     video: "",
-    thumbnail: "/products/jiraiya-tee/front.jpg",
+    thumbnail: "/Productimage/JIRAYA/front.jpg",
     description: "Legendary Sannin Jiraiya T-shirt",
     category: "Naruto",
     rating: 4.6,
@@ -99,7 +100,6 @@ const products: Product[] = [
     tags: ["anime", "Naruto", "Jiraiya", "Sannin"]
   }
 ];
-
 
 const categories = ["All", "Naruto", "One Piece", "Dragon Ball", "Jujutsu Kaisen"];
 const sortOptions = [
@@ -119,6 +119,7 @@ export const All_product = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [priceRange, setPriceRange] = useState([0, 1000]);
     const [wishlist, setWishlist] = useState<string[]>([]);
+    const [imageErrors, setImageErrors] = useState<string[]>([]);
 
     // Navigation functions
     const navigateToProduct = (productId: string) => {
@@ -133,6 +134,32 @@ export const All_product = () => {
 
     const handleImageClick = (productId: string) => {
         navigateToProduct(productId);
+    };
+
+    // Handle image errors
+    const handleImageError = (productId: string) => {
+        setImageErrors(prev => [...prev, productId]);
+    };
+
+    // Get fallback image or placeholder - improved version
+    const getImageSrc = (product: Product) => {
+        if (imageErrors.includes(product.id)) {
+            // Return a nice placeholder image instead of showing the path
+            return `data:image/svg+xml,${encodeURIComponent(`
+                <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="400" fill="#1a1a1a"/>
+                    <text x="200" y="180" text-anchor="middle" fill="#666" font-family="Arial" font-size="16">${product.name}</text>
+                    <text x="200" y="220" text-anchor="middle" fill="#999" font-family="Arial" font-size="14">Image Not Available</text>
+                </svg>
+            `)}`;
+        }
+        return product.thumbnail || `data:image/svg+xml,${encodeURIComponent(`
+            <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="400" fill="#1a1a1a"/>
+                <text x="200" y="180" text-anchor="middle" fill="#666" font-family="Arial" font-size="16">${product.name}</text>
+                <text x="200" y="220" text-anchor="middle" fill="#999" font-family="Arial" font-size="14">Loading...</text>
+            </svg>
+        `)}`;
     };
 
     // Filter and sort products
@@ -328,37 +355,25 @@ export const All_product = () => {
                                         : "p-2 sm:p-8 w-full"
                                 }`}
                             >
-                                {/* Product Image/Video */}
+                                {/* Product Image */}
                                 <div className={`relative overflow-hidden rounded-lg sm:rounded-xl bg-black/40 backdrop-blur-md border border-white/20 ${
                                     viewMode === "list" 
                                         ? "w-24 h-24 sm:w-56 sm:h-56 flex-shrink-0" 
                                         : "w-full h-32 sm:h-48 lg:h-80 mb-2 sm:mb-4 lg:mb-6"
                                 }`}>
-                                    {product.type === "video" ? (
-                                        <video
-                                            src={product.video}
-                                            muted
-                                            loop
-                                            playsInline
-                                            className="w-full h-full object-cover"
-                                            onMouseEnter={(e) => {
-                                                const playPromise = e.currentTarget.play();
-                                                if (playPromise !== undefined) {
-                                                    playPromise.catch((error) =>
-                                                        console.warn("Video play interrupted", error)
-                                                    );
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.pause();
-                                                e.currentTarget.currentTime = 0;
-                                            }}
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-                                            <span className="text-gray-400 text-xs">Image</span>
-                                        </div>
-                                    )}
+                                    <img
+                                        src={getImageSrc(product)}
+                                        alt={product.name}
+                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        loading="lazy"
+                                        onError={() => handleImageError(product.id)}
+                                        onLoad={() => {
+                                            // Remove from error list if image loads successfully
+                                            setImageErrors(prev => prev.filter(id => id !== product.id));
+                                        }}
+                                    />
+                                    
+                                    {/* Removed debug info completely */}
                                     
                                     {/* Badges */}
                                     <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col gap-1">
@@ -369,7 +384,7 @@ export const All_product = () => {
                                         )}
                                         {product.isSale && (
                                             <span className="bg-black/90 backdrop-blur-md text-white px-1.5 py-0.5 sm:px-2 rounded-full text-xs font-bold border border-white/30 shadow-lg shadow-black/50">
-                                                50% OFF
+                                                25% OFF
                                             </span>
                                         )}
                                         {!product.inStock && (
