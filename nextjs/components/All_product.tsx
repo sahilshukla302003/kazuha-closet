@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation"; // For Next.js routing
 import { Search, Grid, List, Heart, ShoppingCart, Star, Eye, SlidersHorizontal } from "lucide-react";
 import Navbar from "./Landingpage/Navbar";
 
-type Product = {
+// Export the Product type so it can be used in other files (e.g., search.tsx)
+export type Product = {
     id: string;
     name: string;
     price: string;
@@ -22,7 +23,8 @@ type Product = {
     tags: string[];
 };
 
-const products: Product[] = [
+// Export the products array so it can be used in other files (e.g., search.tsx)
+export const products: Product[] = [
   {
     id: "naruto-tee-001",
     name: "Naruto Tee",
@@ -372,8 +374,6 @@ export const All_product = () => {
                                             setImageErrors(prev => prev.filter(id => id !== product.id));
                                         }}
                                     />
-                                    
-                                    {/* Removed debug info completely */}
                                     
                                     {/* Badges */}
                                     <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col gap-1">
