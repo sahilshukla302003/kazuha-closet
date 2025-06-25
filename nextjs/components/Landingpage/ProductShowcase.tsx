@@ -46,6 +46,8 @@ const products: Product[] = [
   },
 ];
 
+
+
 const ProductShowcase = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const observerRef = useRef<(HTMLVideoElement | null)[]>([]);
