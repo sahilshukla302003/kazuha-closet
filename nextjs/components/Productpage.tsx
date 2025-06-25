@@ -11,7 +11,7 @@ import {
   Scale3D,
   Ruler,
 } from "lucide-react";
-import { getProductDetails } from "@/utils/api/productUtils";
+import { getProductDetails, addProducttoCart } from "@/utils/api/productUtils";
 import Navbar from "./Landingpage/Navbar";
 
 type ProductImage = {
@@ -65,7 +65,9 @@ export default function ProductPage() {
     Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < Math.floor(rating) ? "fill-white text-white" : "text-gray-400"}`}
+        className={`w-4 h-4 ${
+          i < Math.floor(rating) ? "fill-white text-white" : "text-gray-400"
+        }`}
       />
     ));
 
@@ -76,6 +78,37 @@ export default function ProductPage() {
 
   const handleBuyNow = () => {
     console.log("Proceeding to Buy Now", { product: currentProduct, quantity });
+  };
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) {
+      alert("Please select a size before adding to cart.");
+      return;
+    }
+
+    const userId = localStorage.getItem("userid");
+    const productId = currentProduct?.id;
+
+    if (!userId || !productId) {
+      alert("User or product data missing.");
+      return;
+    }
+
+    try {
+      const payload = {
+        user_id: userId,
+        product_id: productId,
+        quantity,
+        size: selectedSize,
+      };
+
+      const res = await addProducttoCart(payload);
+      alert("Product added to cart!");
+      console.log("Cart updated:", res);
+    } catch (error) {
+      console.error("Failed to add product to cart", error);
+      alert("Something went wrong while adding to cart.");
+    }
   };
 
   if (!currentProduct) return null;
@@ -109,9 +142,11 @@ export default function ProductPage() {
                   onClick={() => setMainImage(img.url)}
                   className={`rounded-xl overflow-hidden border transition-all duration-200
                     w-[120px] h-[160px] sm:w-[180px] sm:h-[220px]
-                    ${mainImage === img.url
-                      ? "border-white scale-105"
-                      : "border-white/20 hover:border-white"}`}
+                    ${
+                      mainImage === img.url
+                        ? "border-white scale-105"
+                        : "border-white/20 hover:border-white"
+                    }`}
                 >
                   <img
                     src={img.url}
@@ -128,21 +163,33 @@ export default function ProductPage() {
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold">
               {currentProduct.name}
             </h1>
-            <p className="text-gray-400 text-xs sm:text-sm">{currentProduct.category}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">
+              {currentProduct.category}
+            </p>
 
             <div className="flex items-center gap-2">
               <div className="flex">{renderStars(currentProduct.rating)}</div>
-              <span className="text-white font-semibold text-xs sm:text-sm">{currentProduct.rating}</span>
+              <span className="text-white font-semibold text-xs sm:text-sm">
+                {currentProduct.rating}
+              </span>
             </div>
 
             {/* Price Section */}
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xl sm:text-3xl font-bold text-white">₹{currentProduct.price}</span>
-              <span className="text-sm sm:text-lg text-gray-400 line-through">₹{currentProduct.originalPrice}</span>
-              <span className="text-green-400 font-semibold text-xs sm:text-base">{discountPercentage}% OFF</span>
+              <span className="text-xl sm:text-3xl font-bold text-white">
+                ₹{currentProduct.price}
+              </span>
+              <span className="text-sm sm:text-lg text-gray-400 line-through">
+                ₹{currentProduct.originalPrice}
+              </span>
+              <span className="text-green-400 font-semibold text-xs sm:text-base">
+                {discountPercentage}% OFF
+              </span>
             </div>
 
-            <p className="text-gray-300 text-xs sm:text-base">{currentProduct.description}</p>
+            <p className="text-gray-300 text-xs sm:text-base">
+              {currentProduct.description}
+            </p>
 
             {/* Size Selector */}
             <div>
@@ -187,7 +234,10 @@ export default function ProductPage() {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">
-              <button className="w-full sm:w-1/2 bg-white text-black font-bold py-2 sm:py-3 rounded-xl hover:scale-105 transition-all shadow-md text-xs sm:text-sm">
+              <button
+                onClick={handleAddToCart}
+                className="w-full sm:w-1/2 bg-white text-black font-bold py-2 sm:py-3 rounded-xl hover:scale-105 transition-all shadow-md text-xs sm:text-sm"
+              >
                 <ShoppingCart className="w-4 h-4 inline mr-2" />
                 Add to Cart
               </button>

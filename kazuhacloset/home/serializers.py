@@ -7,6 +7,12 @@ class RegisterSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=15)
     password = serializers.CharField(write_only=True)  # We don't want to return the password
 
+class AddToCartSerializer(serializers.Serializer):
+    user_id = serializers.CharField()
+    product_id = serializers.CharField()
+    quantity = serializers.IntegerField(min_value=1)
+    size = serializers.CharField()
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
