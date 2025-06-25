@@ -304,17 +304,6 @@ export default function Navbar() {
             </svg>
           </Link>
         )}
-
-        {/* Heart */}
-        <div className="hover:scale-125 transition-transform duration-300 hover:text-red-400 cursor-pointer" aria-label="Favorites">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 21C12 21 4 13.5 4 8.5C4 6 6 4 8.5 4C10.11 4 11.55 4.99 12 6.25C12.45 4.99 13.89 4 15.5 4C18 4 20 6 20 8.5C20 13.5 12 21 12 21Z"
-            />
-          </svg>
-        </div>
       </div>
 
       {/* Mobile menu dropdown */}
@@ -331,16 +320,7 @@ export default function Navbar() {
             Cart
           </Link>
 
-          <Link href="/favorites" className="flex items-center gap-3 hover:text-red-400 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 21C12 21 4 13.5 4 8.5C4 6 6 4 8.5 4C10.11 4 11.55 4.99 12 6.25C12.45 4.99 13.89 4 15.5 4C18 4 20 6 20 8.5C20 13.5 12 21 12 21Z"
-              />
-            </svg>
-            Favorites
-          </Link>
+         
 
           {firstLetter ? (
             <>
