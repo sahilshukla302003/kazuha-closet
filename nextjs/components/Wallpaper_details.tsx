@@ -1,10 +1,12 @@
+// Wallpaper_details.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 // Wallpaper URLs by category
-const wallpapers = {
+export const wallpapers = {
   naruto: Array.from({ length: 15 }, (_, i) => `/wallpapers/naruto/n${i + 1}.jpg`),
   demonslayer: Array.from({ length: 15 }, (_, i) => `/wallpapers/demonslayer/ds${i + 1}.jpg`),
   dragonball: Array.from({ length: 15 }, (_, i) => `/wallpapers/dragonball/db${i + 1}.jpg`),
@@ -96,7 +98,29 @@ const ScrollSlider = ({ images }: { images: string[] }) => {
 };
 
 export default function WallpapersPage() {
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof wallpapers | "all">("all");
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category');
+
+  // Find the category key that matches the initialCategory from URL
+  const defaultCategoryKey = categories.find(cat =>
+    cat.key.toLowerCase() === (initialCategory?.toLowerCase() || '') ||
+    cat.label.toLowerCase() === (initialCategory?.toLowerCase() || '')
+  )?.key || "all";
+
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof wallpapers | "all">(defaultCategoryKey);
+
+  // Update selectedCategory state if URL parameter changes
+  useEffect(() => {
+    const currentCategoryParam = searchParams.get('category');
+    const newCategoryKey = categories.find(cat =>
+      cat.key.toLowerCase() === (currentCategoryParam?.toLowerCase() || '') ||
+      cat.label.toLowerCase() === (currentCategoryParam?.toLowerCase() || '')
+    )?.key || "all";
+
+    if (selectedCategory !== newCategoryKey) {
+      setSelectedCategory(newCategoryKey);
+    }
+  }, [searchParams]); // Removed selectedCategory from dependency array
 
   const filteredCategories =
     selectedCategory === "all"
