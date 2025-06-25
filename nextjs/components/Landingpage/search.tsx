@@ -1,9 +1,10 @@
+// search.tsx
 // "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Import useRouter
-import { products } from '../All_product'; // Assuming All_product.tsx is one level up from search.tsx
-import { wallpapers as rawWallpapers } from '../Wallpaper_details'; // Assuming Wallpaper_details.tsx is one level up from search.tsx
+import { products } from '../All_product'; // Assuming components is a direct sibling to search.tsx, or adjust to '@/components/All_product' if using aliases
+import { wallpapers as rawWallpapers } from '../Wallpaper_details'; // Assuming Wallpaper_details.tsx is still a sibling
 
 // Define a unified interface for items that can be searched across products and wallpapers
 interface SearchItem {
@@ -42,8 +43,8 @@ const transformData = (): SearchItem[] => {
       name: product.name,
       description: product.description,
       category: product.category,
-      imageUrl: product.thumbnail || (product.type === 'video' 
-                  ? 'https://placehold.co/60x60/333333/FFFFFF?text=Video' 
+      imageUrl: product.thumbnail || (product.type === 'video'
+                  ? 'https://placehold.co/60x60/333333/FFFFFF?text=Video'
                   : 'https://placehold.co/60x60/555555/FFFFFF?text=Product'),
       itemType: 'product',
       originalProductId: product.id,
@@ -156,8 +157,9 @@ export default function SearchBar({ isMobile = false, onClose }: SearchBarProps)
       localStorage.setItem('productid', item.originalProductId);
       router.push('/product_page/');
     } else if (item.itemType === 'product_category') {
-      // If it's a product category suggestion, navigate to all_products with category filter
-      router.push(`/all_products?category=${encodeURIComponent(item.category)}`);
+      // If it's a product category suggestion (e.g., "Naruto T-shirts" or "All T-shirts"),
+      // navigate to allproducts (no underscore) with the category filter, but NO search term.
+      router.push(`/allproducts?category=${encodeURIComponent(item.category)}`); // Changed from /all_products
     } else if (item.itemType === 'wallpaper') {
       // If it's a wallpaper (either generic or specific image), navigate to wallpapers page
       router.push(`/wallpapers?category=${encodeURIComponent(item.category)}`);
@@ -172,27 +174,21 @@ export default function SearchBar({ isMobile = false, onClose }: SearchBarProps)
     if (query.trim()) {
       const lowerCaseQuery = query.toLowerCase();
 
-      // Check for generic wallpaper or product category suggestions first
-      const matchedCategorySuggestion = filteredItems.find(item => 
-        (item.itemType === 'wallpaper' || item.itemType === 'product_category') &&
-        (item.name.toLowerCase() === lowerCaseQuery || item.description.toLowerCase().includes(lowerCaseQuery))
+      // Check if the query *exactly matches* a product category suggestion's name.
+      // This is for cases like typing "All T-shirts" and hitting enter.
+      const matchedProductCategoryByName = filteredItems.find(item =>
+        item.itemType === 'product_category' && item.name.toLowerCase() === lowerCaseQuery
       );
 
-      if (matchedCategorySuggestion) {
-        if (matchedCategorySuggestion.itemType === 'wallpaper') {
-          router.push(`/wallpapers?category=${encodeURIComponent(matchedCategorySuggestion.category)}`);
-        } else if (matchedCategorySuggestion.itemType === 'product_category') {
-          router.push(`/all_products?category=${encodeURIComponent(matchedCategorySuggestion.category)}`);
-        }
-      } else if (lowerCaseQuery.includes('t-shirt') || lowerCaseQuery.includes('tshirts') || lowerCaseQuery.includes('products')) {
-        // If it's a general "t-shirt" or "product" search but no specific category matched, default to all products
-        router.push(`/all_products?category=All`); // Use "All" for products
+      if (matchedProductCategoryByName) {
+        router.push(`/allproducts?category=${encodeURIComponent(matchedProductCategoryByName.category)}`); // Changed from /all_products
       } else if (lowerCaseQuery.includes('wallpaper')) {
-        // If it's a general "wallpaper" search but no specific category matched, default to all wallpapers
-        router.push(`/wallpapers?category=all`); // Use "all" for wallpapers
+        // If it explicitly includes 'wallpaper', treat it as a general wallpaper search
+        router.push(`/wallpapers?search=${encodeURIComponent(query.trim())}`);
       } else {
-        // Fallback for general searches (e.g., "naruto" without "t-shirt" or "wallpaper")
-        router.push(`/all_products?search=${encodeURIComponent(query.trim())}`);
+        // For all other cases (including general product terms like "naruto" without matching a category suggestion),
+        // redirect to allproducts (no underscore) and pass the query as a 'search' parameter.
+        router.push(`/allproducts?search=${encodeURIComponent(query.trim())}`); // Changed from /all_products
       }
 
       if (onClose) {

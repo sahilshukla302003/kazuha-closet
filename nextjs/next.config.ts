@@ -1,15 +1,19 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      'placehold.co', // IMPORTANT: This must be here to allow images from placehold.co
-      // Add any other external image domains your application uses here
-      // e.g., 'cdn.example.com', 'your-custom-image-domain.com', etc.
+    dangerouslyAllowSVG: true, // This is crucial for your SVG data URIs
+
+    remotePatterns: [
+      // Keep 'placehold.co' only if you are actively using external images from it.
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
     ],
   },
-  // Add any other Next.js configuration options you might have here
-  // For example: output: 'export', reactStrictMode: true, etc.
+  // ... other Next.js configurations
 };
 
 export default nextConfig;
