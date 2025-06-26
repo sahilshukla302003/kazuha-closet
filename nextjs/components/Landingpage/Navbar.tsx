@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { Luckiest_Guy } from 'next/font/google';
 import { getUser } from '@/utils/api/userUtils';
-import SearchBar from './search'; // Import the SearchBar component
 
 interface User {
   first_name?: string;
@@ -25,8 +24,13 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // New state for search query
 
+  // Corrected spelling of HTMLDivElement for dropdownRef
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // mobileSearchRef needs to be HTMLFormElement because it's for a <form>
+  const mobileSearchRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -38,6 +42,10 @@ export default function Navbar() {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
+      }
+      // Check if click is outside mobile search form/div
+      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
+        setMobileSearchOpen(false);
       }
     };
 
@@ -69,8 +77,20 @@ export default function Navbar() {
     window.location.href = '/';
   };
 
-  const closeMobileSearch = () => {
-    setMobileSearchOpen(false);
+  // Function to handle search input changes
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Function to handle search submission (e.g., when pressing Enter or clicking a search button)
+  const handleSearchSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+    if (searchQuery.trim()) {
+      // Navigate to a search results page with the query
+      window.location.href = `/search?query=${encodeURIComponent(searchQuery)}`;
+      // Close mobile search bar if open after search
+      setMobileSearchOpen(false);
+    }
   };
 
   return (
@@ -90,10 +110,23 @@ export default function Navbar() {
         </div>
       </Link>
 
-      {/* Desktop Search - Now using SearchBar component */}
-      <div className="hidden sm:flex items-center w-1/2 md:w-1/3">
-        <SearchBar />
-      </div>
+      {/* Desktop Search */}
+      {/* Wrap in <form> for submission handling */}
+      <form onSubmit={handleSearchSubmit} className="hidden sm:flex items-center bg-white/80 rounded-full px-4 py-2 w-1/2 md:w-1/3 backdrop-blur-sm shadow-inner">
+        <button type="submit" className="text-gray-600 mr-2" aria-label="Search Icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <input
+          type="text"
+          placeholder="Search"
+          className="bg-transparent outline-none text-sm w-full text-black placeholder-gray-500"
+          value={searchQuery} // Controlled component
+          onChange={handleSearchChange} // Handle input changes
+        />
+      </form>
 
       {/* Mobile Icons (Search, Orders, Hamburger) */}
       <div className="sm:hidden flex items-center space-x-4">
@@ -139,11 +172,26 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Search Bar (appears when icon is clicked) - Now using SearchBar component */}
+      {/* Mobile Search Bar (appears when icon is clicked) */}
       {mobileSearchOpen && (
-        <div className="absolute top-full left-0 w-full px-4 py-2 bg-black/90 backdrop-blur-md shadow-md sm:hidden">
-          <SearchBar isMobile={true} onClose={closeMobileSearch} />
-        </div>
+        // Wrap in <form> and assign ref
+        <form onSubmit={handleSearchSubmit} ref={mobileSearchRef} className="absolute top-full left-0 w-full px-4 py-2 bg-black/90 backdrop-blur-md shadow-md sm:hidden">
+          <div className="flex items-center bg-white/90 rounded-full px-4 py-2">
+            <button type="submit" className="text-gray-600 mr-2" aria-label="Search Icon">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-transparent outline-none text-sm w-full text-black placeholder-gray-500"
+              value={searchQuery} // Controlled component
+              onChange={handleSearchChange} // Handle input changes
+            />
+          </div>
+        </form>
       )}
 
       {/* Desktop Right Icons */}
@@ -254,7 +302,6 @@ export default function Navbar() {
                 d="M12 14c-3.314 0-6 2.239-6 5v1h12v-1c0-2.761-2.686-5-6-5zM12 12a4 4 0 100-8 4 4 0 000 8z"
               />
             </svg>
-            {/* Removed 'Login' text from here for desktop view */}
           </Link>
         )}
       </div>
@@ -324,7 +371,7 @@ export default function Navbar() {
                   d="M12 14c-3.314 0-6 2.239-6 5v1h12v-1c0-2.761-2.686-5-6-5zM12 12a4 4 0 100-8 4 4 0 000 8z"
                 />
               </svg>
-              Login {/* This "Login" text is preserved for mobile view */}
+              Login
             </Link>
           )}
         </div>
