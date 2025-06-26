@@ -6,6 +6,7 @@ import { Poppins } from 'next/font/google';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
+import FloatingLauncher from '@/components/Landingpage/FloatingLauncher'; // 👈 NEW
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,16 +23,13 @@ export default function RootLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    // Initial load timeout
     const timer = setTimeout(() => setLoading(false), 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), 1800);
-
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -39,7 +37,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning={true}>
       <body className={`bg-[#1b1b1d] ${poppins.className}`}>
         <main className="relative min-h-screen overflow-x-hidden">
-          {loading ? <Loader /> : children}
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              {children}
+              <FloatingLauncher /> {/* 👈 Bold floating button always visible */}
+            </>
+          )}
         </main>
       </body>
     </html>
