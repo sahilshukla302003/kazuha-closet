@@ -1,12 +1,10 @@
-// components/All_product.tsx
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation"; // For Next.js routing
 import { Search, Grid, List, Heart, ShoppingCart, Star, Eye, SlidersHorizontal } from "lucide-react";
-import Navbar from "./Landingpage/Navbar"; // Assuming Navbar is still here relative to this file
+import Navbar from "./Landingpage/Navbar";
 
-// Export the Product type so it can be used in other files (e.g., search.tsx)
-export type Product = {
+type Product = {
     id: string;
     name: string;
     price: string;
@@ -24,8 +22,7 @@ export type Product = {
     tags: string[];
 };
 
-// Export the products array so it can be used in other files (e.g., search.tsx)
-export const products: Product[] = [
+const products: Product[] = [
   {
     id: "naruto-tee-001",
     name: "Naruto Tee",
@@ -115,13 +112,8 @@ const sortOptions = [
 
 export const All_product = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
-
-    // Initialize state from URL params on first render
-    const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') || "");
-    const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('category') || "All");
-
-    // Other states
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("All");
     const [sortBy, setSortBy] = useState("default");
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [showFilters, setShowFilters] = useState(false);
@@ -129,89 +121,14 @@ export const All_product = () => {
     const [wishlist, setWishlist] = useState<string[]>([]);
     const [imageErrors, setImageErrors] = useState<string[]>([]);
 
-
-    // This useEffect will update internal state when URL params change (e.g., navigating from search)
-    useEffect(() => {
-        const urlCategory = searchParams.get('category');
-        const urlSearch = searchParams.get('search');
-
-        let newCategory = selectedCategory;
-        let newSearchTerm = searchTerm;
-
-        // If URL has a category, use it
-        if (urlCategory !== null) {
-            newCategory = urlCategory;
-            newSearchTerm = ""; // Clear search term if category is set from URL
-        }
-        // If URL has a search term AND no category (or category is "All"), use search term
-        else if (urlSearch !== null) {
-            newSearchTerm = urlSearch;
-            newCategory = "All"; // Set category to All if a search term is active
-        } else {
-            // Default case: no specific params, reset to "All" and empty search
-            newCategory = "All";
-            newSearchTerm = "";
-        }
-
-        // Only update state if it's different from the new determined values
-        if (newCategory !== selectedCategory) {
-            setSelectedCategory(newCategory);
-        }
-        if (newSearchTerm !== searchTerm) {
-            setSearchTerm(newSearchTerm);
-        }
-
-    }, [searchParams]); // Dependency array: only re-run when searchParams object changes
-
-
-    // Function to handle changing the category via buttons
-    const handleCategoryButtonClick = (category: string) => {
-        // Update the URL to reflect the new category.
-        // This is crucial because it triggers the useEffect above to re-sync.
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('category', category);
-        newUrl.searchParams.delete('search'); // Clear search param when selecting a category
-        router.push(newUrl.pathname + newUrl.search); // Use push to update the URL
-
-        // Also update the internal state immediately for snappier UI,
-        // although useEffect will eventually sync it anyway.
-        setSelectedCategory(category);
-        setSearchTerm("");
-    };
-
-    // Function to handle search input changes (onKeyDown for Enter, or on form submit)
-    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSearchTerm = e.target.value;
-        setSearchTerm(newSearchTerm); // Update internal state immediately
-
-        // Don't update URL on every keystroke, wait for submit or use a debounce.
-        // For now, we'll keep the URL update to the handleSearchSubmit for clarity.
-        // If you want live URL updates on type, consider debouncing this `router.push`.
-    };
-
-    const handleSearchSubmit = () => {
-        const newUrl = new URL(window.location.href);
-        if (searchTerm.trim() !== "") {
-            newUrl.searchParams.set('search', encodeURIComponent(searchTerm.trim()));
-            newUrl.searchParams.delete('category'); // Clear category param when searching
-        } else {
-            newUrl.searchParams.delete('search');
-            // If search is cleared, default to "All" category
-            newUrl.searchParams.set('category', 'All');
-        }
-        router.push(newUrl.pathname + newUrl.search);
-        // setSelectedCategory("All"); // Ensure category is "All" if a search term is present
-    };
-
-
-    // Other navigation functions (remain unchanged)
+    // Navigation functions
     const navigateToProduct = (productId: string) => {
         localStorage.setItem("productid",productId);
         router.push(`/product_page/`);
     };
 
     const handleQuickView = (e: React.MouseEvent, productId: string) => {
-        e.stopPropagation();
+        e.stopPropagation(); 
         navigateToProduct(productId);
     };
 
@@ -245,22 +162,18 @@ export const All_product = () => {
         `)}`;
     };
 
-
-    // Filter and sort products (logic remains unchanged)
+    // Filter and sort products
     const filteredAndSortedProducts = useMemo(() => {
         const filtered = products.filter(product => {
-            // Check if product matches the current search term (if any)
-            const matchesSearch = searchTerm === "" ||
-                                  product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                  product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                  product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-
-            // Check if product matches the selected category
+            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+            
             const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-
+            
             const price = parseInt(product.price.replace("₹", ""));
             const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
-
+            
             return matchesSearch && matchesCategory && matchesPrice;
         });
 
@@ -287,8 +200,8 @@ export const All_product = () => {
 
     const toggleWishlist = (e: React.MouseEvent, productId: string) => {
         e.stopPropagation(); // Prevent navigating when clicking wishlist
-        setWishlist(prev =>
-            prev.includes(productId)
+        setWishlist(prev => 
+            prev.includes(productId) 
                 ? prev.filter(id => id !== productId)
                 : [...prev, productId]
         );
@@ -306,7 +219,7 @@ export const All_product = () => {
     return (
         <main className="relative bg-gradient-to-bl from-[#000000] to-[#a3a3a3] min-h-screen scroll-smooth text-white">
             <Navbar/>
-
+            
             {/* Header Section */}
             <div className="pt-24 pb-8 px-3 sm:px-6">
                 <div className="max-w-7xl mx-auto">
@@ -329,18 +242,9 @@ export const All_product = () => {
                                     type="text"
                                     placeholder="Search products..."
                                     value={searchTerm}
-                                    onChange={handleSearchInputChange}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleSearchSubmit();
-                                        }
-                                    }}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full pl-10 pr-4 py-2 sm:py-3 bg-black/60 backdrop-blur-md border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:border-white focus:bg-black/40 focus:shadow-lg focus:shadow-white/20 transition-all text-sm sm:text-base"
                                 />
-                                {/* Add a search icon button if needed for explicit submit */}
-                                {/* <button onClick={handleSearchSubmit} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                    <Search />
-                                </button> */}
                             </div>
 
                             {/* Category Filter */}
@@ -348,7 +252,7 @@ export const All_product = () => {
                                 {categories.map(category => (
                                     <button
                                         key={category}
-                                        onClick={() => handleCategoryButtonClick(category)}
+                                        onClick={() => setSelectedCategory(category)}
                                         className={`px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 font-medium backdrop-blur-md text-xs sm:text-sm ${
                                             selectedCategory === category
                                                 ? 'bg-white/90 text-black shadow-lg shadow-white/30'
@@ -437,7 +341,7 @@ export const All_product = () => {
                     </div>
 
                     {/* Products Grid/List */}
-                    <div className={viewMode === "grid"
+                    <div className={viewMode === "grid" 
                         ? "grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6 lg:gap-8"
                         : "space-y-4 sm:space-y-6"
                     }>
@@ -446,22 +350,20 @@ export const All_product = () => {
                                 key={product.id}
                                 onClick={() => handleImageClick(product.id)}
                                 className={`group relative bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:border-white/40 hover:bg-black/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-white/30 cursor-pointer ${
-                                    viewMode === "list"
-                                        ? "flex gap-4 sm:gap-6 p-4 sm:p-8 max-w-full"
+                                    viewMode === "list" 
+                                        ? "flex gap-4 sm:gap-6 p-4 sm:p-8 max-w-full" 
                                         : "p-2 sm:p-8 w-full"
                                 }`}
                             >
                                 {/* Product Image */}
                                 <div className={`relative overflow-hidden rounded-lg sm:rounded-xl bg-black/40 backdrop-blur-md border border-white/20 ${
-                                    viewMode === "list"
-                                        ? "w-24 h-24 sm:w-56 sm:h-56 flex-shrink-0"
+                                    viewMode === "list" 
+                                        ? "w-24 h-24 sm:w-56 sm:h-56 flex-shrink-0" 
                                         : "w-full h-32 sm:h-48 lg:h-80 mb-2 sm:mb-4 lg:mb-6"
                                 }`}>
                                     <img
                                         src={getImageSrc(product)}
                                         alt={product.name}
-                                        width={500} // Add explicit width and height for Next/Image optimization (if using next/image)
-                                        height={500} // Adjust these based on your image aspect ratio and desired display size
                                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                         loading="lazy"
                                         onError={() => handleImageError(product.id)}
@@ -470,7 +372,9 @@ export const All_product = () => {
                                             setImageErrors(prev => prev.filter(id => id !== product.id));
                                         }}
                                     />
-
+                                    
+                                    {/* Removed debug info completely */}
+                                    
                                     {/* Badges */}
                                     <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col gap-1">
                                         {product.isNew && (
@@ -506,11 +410,11 @@ export const All_product = () => {
 
                                     {/* Quick View - Hidden on mobile */}
                                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <button
+                                        <button 
                                             onClick={(e) => handleQuickView(e, product.id)}
                                             className="bg-white/20 backdrop-blur-xl text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full hover:bg-white/30 hover:shadow-lg hover:shadow-white/30 transition-all flex items-center gap-1 sm:gap-2 border border-white/30 text-xs sm:text-sm"
                                         >
-                                            <Eye className="w-3 h-3 sm:w-4 h-4" />
+                                            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                                             <span className="hidden sm:inline">Quick View</span>
                                             <span className="sm:hidden">View</span>
                                         </button>
@@ -524,7 +428,7 @@ export const All_product = () => {
                                             {product.name}
                                         </h3>
                                         <p className="text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2 font-medium">{product.category}</p>
-
+                                        
                                         {/* Rating */}
                                         <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
                                             <div className="flex">
@@ -583,7 +487,7 @@ export const All_product = () => {
                                             <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                                             {product.inStock ? "Add" : "Out"}
                                         </button>
-                                        <button
+                                        <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 navigateToProduct(product.id);
