@@ -1,32 +1,75 @@
 "use client";
 
-import React from 'react';
-import Navbar from './Landingpage/Navbar';
-import { Poppins } from 'next/font/google';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import Navbar from "./Landingpage/Navbar";
+import { getUserCart, getProductDetails } from "@/utils/api/productUtils";
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-});
+type Product = {
+  id: string;
+  name: string;
+  price: string;
+  originalPrice: string;
+  description: string;
+  detailedDescription: string;
+  category: string;
+  rating: number;
+  tags: string[];
+  sizes: string[];
+  features: string[];
+  specifications: { [key: string]: string };
+  images: { url: string; alt: string }[];
+};
+
+type CartItem = Product & {
+  quantity: number;
+  size: string;
+};
 
 export default function CartPage() {
-  const cartItems: {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-  }[] = []; // Leave empty to show empty cart animation
+  const [cartProducts, setCartProducts] = useState<CartItem[]>([]);
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  useEffect(() => {
+    const fetchCartData = async () => {
+      const userId = localStorage.getItem("userid");
+      if (!userId) return;
+
+      try {
+        const cartData = await getUserCart(userId);
+        const cart = cartData.cart;
+
+        const cartItems = await Promise.all(
+          Object.entries(cart).map(async ([productId, value]) => {
+            const [quantity, size] = value as [number, string];
+            const product = await getProductDetails(productId);
+            return {
+              ...product,
+              quantity,
+              size,
+            };
+          })
+        );
+        setCartProducts(cartItems);
+      } catch (error) {
+        console.error("Failed to fetch cart products:", error);
+      }
+    };
+    fetchCartData();
+  }, []);
+
+  const cleanPrice = (price: string) => parseFloat(price.replace(/[^0-9.]/g, ""));
+
+  const total = cartProducts.reduce((acc, item) => {
+    const price = cleanPrice(item.price);
+    const qty = item.quantity || 0;
+    return acc + price * qty;
+  }, 0);
 
   return (
-    <main className="bg-black text-white min-h-screen px-6 py-8 flex flex-col items-center justify-start">
+    <main className="bg-black text-white min-h-screen px-4 py-6">
       <Navbar />
 
-      <div className={`${poppins.className} w-full flex flex-col items-center`}>
-        {cartItems.length === 0 ? (
+      <div className="max-w-5xl mx-auto w-full">
+        {cartProducts.length === 0 ? (
           <div className="flex flex-col items-center text-center mt-32">
             <div className="w-40 h-40">
               <img
@@ -35,7 +78,7 @@ export default function CartPage() {
                 className="rounded-xl shadow-xl w-full h-full object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold mt-6 drop-shadow-[1px_1px_3px_rgba(0,0,0,0.6)]">
+            <h1 className="text-2xl font-bold mt-6">
               Your Cart is Feeling Lonely
             </h1>
             <p className="text-gray-400 text-base mt-2 max-w-sm">
@@ -44,39 +87,54 @@ export default function CartPage() {
             </p>
           </div>
         ) : (
-          <div className="bg-[#3c3c3c] rounded-2xl p-6 shadow-2xl max-w-4xl w-full mt-16">
-            <h1 className="text-4xl font-bold text-white mb-10 drop-shadow-[2px_2px_4px_rgba(0,0,0,0.8)]">
-              YOUR CART
-            </h1>
+          <>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-10 text-center">YOUR CART</h1>
 
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between mb-6">
-                <div className="relative w-32 h-32">
-                  <Image
-                    src={item.image}
+            {cartProducts.map((item) => (
+              <div
+                key={item.id}
+                className="bg-[#1e1e1e] rounded-xl mb-6 p-3 flex flex-row items-start gap-3 shadow-lg"
+              >
+                {/* Image */}
+                <div className="flex-shrink-0 w-28 h-28 sm:w-40 sm:h-40 md:w-52 md:h-52 flex justify-center items-center">
+                  <img
+                    src={item.images[0]?.url || "/fallback.jpg"}
                     alt={item.name}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-xl shadow-lg"
+                    className="rounded-lg object-cover w-full h-full"
                   />
                 </div>
-                <div className="flex-1 ml-6">
-                  <h2 className="text-2xl font-bold">{item.name}</h2>
-                  <p className="text-gray-300">Qty: {item.quantity}</p>
-                  <p className="text-yellow-400 font-semibold mt-2">₹{item.price}</p>
+
+                {/* Details */}
+                <div className="flex-1 space-y-1">
+                  <h2 className="text-base sm:text-lg md:text-2xl font-semibold">{item.name}</h2>
+
+                  {/* Removed description in mobile */}
+                  <p className="hidden sm:block text-gray-400 text-sm italic truncate max-w-[240px]">
+                    {item.description || "No description available."}
+                  </p>
+
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Price: ₹{cleanPrice(item.price)}</p>
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Quantity: {item.quantity}</p>
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Size: {item.size}</p>
+                  <p className="text-white font-semibold text-sm sm:text-base">
+                    Subtotal: ₹{cleanPrice(item.price) * item.quantity}
+                  </p>
+                  <button className="mt-2 bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-gray-200">
+                    Buy Now
+                  </button>
                 </div>
               </div>
             ))}
 
-            <div className="flex justify-between items-center mt-10 border-t pt-6 border-gray-600">
-              <h3 className="text-2xl font-bold">Total</h3>
-              <span className="text-yellow-400 text-2xl font-bold">₹{total}</span>
+            <div className="bg-[#1e1e1e] mt-10 p-6 rounded-xl flex flex-col md:flex-row justify-between items-center shadow-inner">
+              <h3 className="text-lg sm:text-2xl font-bold text-white mb-4 md:mb-0">
+                Total: <span className="text-yellow-400">₹{total}</span>
+              </h3>
+              <button className="bg-yellow-400 text-black font-bold px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-yellow-500 transition text-xs sm:text-base">
+                Proceed to Checkout
+              </button>
             </div>
-
-            <button className="mt-6 bg-yellow-400 text-black font-bold px-6 py-3 rounded-xl hover:bg-yellow-500 transition">
-              Proceed to Checkout
-            </button>
-          </div>
+          </>
         )}
       </div>
     </main>
