@@ -85,7 +85,6 @@ class AddToCartView(APIView):
             return Response({"error": "Authorization token missing"}, status=401)
         token = auth_header.split(" ")[1]
         user_id=decode_jwt(token)
-        print(user_id)
         if not user_id:
             return Response({"error": "Invalid or expired token"}, status=401)
         serializer = AddToCartSerializer(data=request.data)
@@ -183,3 +182,6 @@ class UpdateProfileView(APIView):
             return Response({"message": "Profile updated successfully"}, status=200)
 
         return Response(serializer.errors, status=400)
+
+
+
