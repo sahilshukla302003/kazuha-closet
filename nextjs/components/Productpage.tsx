@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getProductDetails, addProducttoCart } from "@/utils/api/productUtils";
 import Navbar from "./Landingpage/Navbar";
+import toast from 'react-hot-toast';
 
 type ProductImage = {
   url: string;
@@ -82,32 +83,30 @@ export default function ProductPage() {
 
   const handleAddToCart = async () => {
     if (!selectedSize) {
-      alert("Please select a size before adding to cart.");
+      toast.error("Please select a size before adding to cart.");
       return;
     }
 
-    const userId = localStorage.getItem("userid");
     const productId = currentProduct?.id;
 
-    if (!userId || !productId) {
-      alert("User or product data missing.");
+    if (!productId) {
+      toast.error("User or product data missing.");
       return;
     }
 
     try {
       const payload = {
-        user_id: userId,
         product_id: productId,
         quantity,
         size: selectedSize,
       };
 
       const res = await addProducttoCart(payload);
-      alert("Product added to cart!");
+      toast.success("Product added to cart!");
       console.log("Cart updated:", res);
     } catch (error) {
       console.error("Failed to add product to cart", error);
-      alert("Something went wrong while adding to cart.");
+      toast.error("Something went wrong while adding to cart.");
     }
   };
 

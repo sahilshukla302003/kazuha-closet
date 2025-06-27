@@ -1,9 +1,14 @@
 import RegisterPage from '@/components/Register_user'
 import React from 'react'
+import { Toaster } from 'react-hot-toast'
+
 
 function page() {
   return (
-    <div><RegisterPage/></div>
+    <div>
+      <Toaster position="top-right" gutter={12} toastOptions={{style: {transition: 'all 0.5s ease-in-out', },}}/>
+      <RegisterPage/>
+    </div>
   )
 }
 

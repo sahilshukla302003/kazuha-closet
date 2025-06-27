@@ -21,14 +21,14 @@ const ProfileSection = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  const userId = typeof window !== "undefined" ? localStorage.getItem("userid") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!userId) return;
+      if (!token) return;
 
       try {
-        const user = await getUser(userId);
+        const user = await getUser();
         setUserData(user);
         setFormData(user);
       } catch (error) {
@@ -37,16 +37,16 @@ const ProfileSection = () => {
     };
 
     fetchUser();
-  }, [userId]);
+  }, [token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSave = async () => {
-    if (!userId) return;
+    if (!token) return;
     try {
-      await updateUser(userId, formData);
+      await updateUser(formData);
       setUserData(formData);
       setIsEditing(false);
     } catch (error) {
