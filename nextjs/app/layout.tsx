@@ -3,8 +3,11 @@
 import './globals.css';
 import 'aos/dist/aos.css';
 import { Poppins } from 'next/font/google';
-import { Toaster } from 'react-hot-toast';
-import type { Metadata } from 'next';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { Toaster } from 'react-hot-toast'; // ✅ Make sure this import exists
+import Loader from '@/components/Loader';
+import FloatingLauncher from '@/components/Landingpage/FloatingLauncher'; // ✅ Floating button
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -36,46 +39,44 @@ export default function RootLayout({
       <body className={`bg-[#1b1b1d] ${poppins.className}`}>
         <main className="relative min-h-screen overflow-x-hidden">
           {loading ? (
-            <Loader />
+            <Loader/>
           ) : (
             <>
               {children}
-              <FloatingLauncher /> {/* 👈 Bold floating button always visible */}
+              <FloatingLauncher /> {/* 👈 Stays visible on all pages */}
             </>
           )}
         </main>
-      
-<Toaster
-  position="top-right"
-  toastOptions={{
-    duration: 3000,
-    style: {
-      background: '#1f1f1f',
-      color: '#facc15',
-      fontWeight: 'bold',
-      borderRadius: '10px',
-      padding: '12px 16px',
-      boxShadow: '0 0 10px rgba(255, 255, 255, 0.15)',
-      border: '1px solid #facc15',
-    },
-    success: {
-      iconTheme: {
-        primary: '#22c55e',
-        secondary: '#1f1f1f',
-      },
-    },
-    error: {
-      iconTheme: {
-        primary: '#f87171',
-        secondary: '#1f1f1f',
-      },
-    },
-  }}
-/>
 
+        {/* Toaster for success/error feedback */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1f1f1f',
+              color: '#facc15',
+              fontWeight: 'bold',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              boxShadow: '0 0 10px rgba(255, 255, 255, 0.15)',
+              border: '1px solid #facc15',
+            },
+            success: {
+              iconTheme: {
+                primary: '#22c55e',
+                secondary: '#1f1f1f',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#f87171',
+                secondary: '#1f1f1f',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );
 }
-
-
