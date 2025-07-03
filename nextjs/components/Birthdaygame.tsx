@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Send, Download } from 'lucide-react';
 import Navbar from './Landingpage/Navbar';
 import { rawCharacterData } from './characterData';
-import domtoimage from 'dom-to-image-more';
+import html2canvas from 'html2canvas';  // npm install html2canvas
+
 
 interface Character {
   name: string;
@@ -20,7 +21,7 @@ const generateCharacterMap = (): { [key: string]: Character } => {
     map[char.date].push({
       name: char.name,
       anime: char.anime,
-      image: `https://placehold.co/180x180/${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}/FFFFFF?text=${encodeURIComponent(char.name.split(' ')[0])}`,
+      image: `/Birthdaycard/${parseInt(char.date.split('-')[0])}.jpg`,
       quote: char.quote,
     });
   });
@@ -42,7 +43,7 @@ const generateCharacterMap = (): { [key: string]: Character } => {
       : {
           name: `Mystery Anime Fan ${dayString}`,
           anime: 'Anime Multiverse',
-          image: `https://placehold.co/180x180/E0E0E0/000000?text=Day+${dayString}`,
+          image: `/Birthdaycard/${d}.jpg`,
           quote: `Uncover your anime spirit on the ${dayString}th!`,
         };
   }
@@ -58,6 +59,7 @@ export default function BirthdayCharacterPage() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [error, setError] = useState('');
   const [shareMessage, setShareMessage] = useState('');
+  const [imageLoaded, setImageLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleCheck = () => {
@@ -88,52 +90,50 @@ export default function BirthdayCharacterPage() {
     setShareMessage("You've been redirected to Instagram. Please manually share the card from your downloads.");
   };
 
-  const handleDownloadCard = async () => {
+  const handleDownloadCard = () => {
     if (!cardRef.current) {
       setShareMessage("Error: Could not capture card. Element not found.");
       return;
     }
 
-    setShareMessage("Generating image for download...");
-    try {
-      const dataUrl = await domtoimage.toPng(cardRef.current);
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `${character?.name.replace(/\s/g, '_') || 'anime_character'}_birthday_card.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setShareMessage("Card downloaded! You can now manually share it.");
-    } catch (err) {
-      console.error("Download failed:", err);
-      setShareMessage("Failed to generate image for download. Please try again.");
+    if (!imageLoaded) {
+      setShareMessage("Please wait, image is still loading...");
+      return;
     }
-  };
 
-  const handleNumericInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<string>>,
-    min: number,
-    max: number
-  ) => {
-    const val = e.target.value;
-    if (val === '' || /^\d+$/.test(val)) {
-      const numVal = parseInt(val);
-      if (val === '' || (numVal >= min && numVal <= max)) setter(val);
-      else if (numVal < min) setter(min.toString());
-      else if (numVal > max) setter(max.toString());
-    }
+    setShareMessage("Generating image for download...");
+
+    setTimeout(async () => {
+      try {
+        const canvas = await html2canvas(cardRef.current!, {
+          useCORS: true,
+          backgroundColor: '#18181b',
+          scale: 2,
+        });
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${character?.name.replace(/\s/g, '_') || 'anime_character'}_birthday_card.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setShareMessage("Card downloaded! You can now manually share it.");
+      } catch (err) {
+        console.error("Download failed:", err);
+        setShareMessage("Failed to generate image for download. Please try again.");
+      }
+    }, 500);
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800 flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800 flex items-center justify-center px-2 py-6 sm:px-4 sm:py-12">
       <Navbar />
       <div className="w-full max-w-5xl text-white">
         <motion.h1
-          initial={{ opacity: 0, y: -40 }}
+          initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-5xl sm:text-6xl font-extrabold text-center mb-6 tracking-wide bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent"
+          transition={{ duration: 0.6 }}
+          className="text-4xl sm:text-5xl font-extrabold text-center mb-4 sm:mb-8 tracking-wide bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent"
         >
           Which Anime Character Are You?
         </motion.h1>
@@ -142,29 +142,29 @@ export default function BirthdayCharacterPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-16 w-full max-w-md mx-auto bg-white/10 backdrop-blur-3xl border border-white/30 rounded-3xl shadow-[0_0_60px_rgba(255,255,255,0.15)] px-6 py-10 flex flex-col items-center gap-6 sm:px-8 sm:py-12 md:px-10 md:py-14"
+            className="mt-8 w-[90vw] sm:w-[600px] max-w-full mx-auto bg-white/10 backdrop-blur-3xl border border-white/30 rounded-3xl px-6 py-6 sm:py-10 flex flex-col items-center gap-4 sm:gap-6"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center">Enter your DOB</h2>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+            <h2 className="text-xl sm:text-2xl font-bold text-white text-center">Enter your DOB</h2>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 w-full">
               <input
-                type="number"
+                type="text"
                 value={day}
-                onChange={(e) => handleNumericInputChange(e, setDay, 1, 31)}
+                onChange={(e) => setDay(e.target.value)}
                 placeholder="Day (dd)"
-                className="w-full px-4 py-3 rounded-lg text-white bg-white/20 placeholder-white/70 font-semibold text-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all duration-300 ease-in-out sm:py-4 sm:text-xl"
+                className="w-full px-4 py-2 rounded-lg text-white bg-white/20 placeholder-white/70 font-semibold text-base shadow-inner focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
               <input
-                type="number"
+                type="text"
                 value={month}
-                onChange={(e) => handleNumericInputChange(e, setMonth, 1, 12)}
+                onChange={(e) => setMonth(e.target.value)}
                 placeholder="Month (mm)"
-                className="w-full px-4 py-3 rounded-lg text-white bg-white/20 placeholder-white/70 font-semibold text-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 ease-in-out sm:py-4 sm:text-xl"
+                className="w-full px-4 py-2 rounded-lg text-white bg-white/20 placeholder-white/70 font-semibold text-base shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
-            {error && <p className="text-red-400 text-center mt-2 text-sm sm:text-base">{error}</p>}
+            {error && <p className="text-red-400 text-center text-sm">{error}</p>}
             <button
               onClick={handleCheck}
-              className="bg-yellow-400 hover:bg-yellow-500 px-8 py-3 rounded-lg text-black font-bold text-xl transition shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full sm:w-auto sm:px-10 sm:py-4 sm:text-2xl"
+              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-bold text-lg transition shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full"
             >
               Go
             </button>
@@ -172,82 +172,71 @@ export default function BirthdayCharacterPage() {
         )}
 
         {character && (
-          <div className="flex flex-col items-center justify-center">
-            {/* Card capture area */}
+          <div className="flex flex-col items-center justify-center mt-4">
             <div
-              ref={cardRef}
-              className="bg-[#18181b] p-8 rounded-3xl inline-block"
-              style={{ borderRadius: '1.5rem', boxShadow: 'none' }}
-            >
-              <div
-                className="w-full max-w-5xl mx-auto bg-white/10 backdrop-blur-3xl border border-white/30 rounded-3xl shadow-[0_0_60px_rgba(255,255,255,0.15)] px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-10 sm:px-8 sm:py-12 md:px-10 md:py-14"
-                style={{ boxShadow: 'none' }}
+                ref={cardRef}
+                style={{
+                  backgroundColor: '#18181b',
+                  padding: '24px',
+                  borderRadius: '24px',
+                  fontFamily: "'Poppins', sans-serif",
+                  maxWidth: '600px',
+                  width: '90vw',
+                  minHeight: window.innerWidth >= 640 ? '200px' : 'auto', // ↑ height only on desktop
+                }}
               >
-                <div className="w-[180px] h-[180px] relative rounded-full overflow-hidden border-4 border-white/20 shadow-xl flex-shrink-0 sm:w-[200px] sm:h-[200px]">
+              <div
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '24px',
+                  padding: '20px',
+                  display: 'flex',
+                  gap: '16px',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '4px solid rgba(255, 255, 255, 0.2)',
+                    flexShrink: 0,
+                  }}
+                >
                   <img
                     src={character.image}
                     alt={character.name}
-                    className="object-cover w-full h-full rounded-full"
+                    crossOrigin="anonymous"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/180x180/CCCCCC/000000?text=Error';
+                      setImageLoaded(true);
                     }}
                   />
                 </div>
-                <div className="flex-1 text-center md:text-left space-y-3 sm:space-y-4">
-                  <h2
-                    className="text-3xl sm:text-4xl font-bold text-white"
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      background: 'none',
-                      border: 'none',
-                      boxShadow: 'none',
-                      outline: 'none',
-                    }}
-                  >
-                    {character.name}
-                  </h2>
-                  <p
-                    className="italic text-lg sm:text-xl text-pink-300"
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      background: 'none',
-                      border: 'none',
-                      boxShadow: 'none',
-                      outline: 'none',
-                    }}
-                  >
-                    {character.anime}
-                  </p>
-                  <p
-                    className="mt-2 text-md sm:text-lg text-white/90 max-w-xl"
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      background: 'none',
-                      border: 'none',
-                      boxShadow: 'none',
-                      outline: 'none',
-                    }}
-                  >
-                    “{character.quote}”
-                  </p>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#fff' }}>{character.name}</h2>
+                  <p style={{ fontStyle: 'italic', fontSize: '16px', color: '#f472b6' }}>{character.anime}</p>
+                  <p style={{ fontSize: '14px', color: '#e4e4e7', marginTop: '4px' }}>“{character.quote}”</p>
                 </div>
               </div>
             </div>
 
-            {/* Buttons - not in screenshot */}
-            <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
               <button
                 onClick={handleShareToIGDM}
-                className="flex items-center justify-center gap-2 px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg hover:scale-105 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-500 sm:px-6 sm:py-3 sm:text-xl"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg hover:scale-105 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm sm:text-base"
               >
                 <Send size={18} /> Share on IG DM
               </button>
               <button
                 onClick={handleDownloadCard}
-                className="flex items-center justify-center gap-2 px-5 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-lg hover:scale-105 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 sm:px-6 sm:py-3 sm:text-xl"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-lg hover:scale-105 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm sm:text-base"
               >
                 <Download size={18} /> Download Card
               </button>
