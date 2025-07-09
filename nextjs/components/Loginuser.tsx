@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { userLogin } from '@/utils/api/userUtils';
 import { Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,21 +23,24 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!form.email || !form.password) {
-      alert('Please fill in both email and password');
+      toast.error('Please fill in both email and password');
       return;
     }
 
     try {
       const res = await userLogin(form);
-      if (res && res.id) {
-        localStorage.setItem('userid', res.id);
+      if (res && res.token) {
+        localStorage.setItem('token', res.token);
+        toast.success("Login Successful");
+        setTimeout(() => {
         router.push('/');
+      }, 1500);
+
       } else {
-        alert('Login failed');
+        toast.error('Login failed, please check your credentials');
       }
-    } catch (err) {
-      console.error(err);
-      alert('Something went wrong!');
+    } catch  {
+      toast.error('Something went wrong!');
     }
   };
 
@@ -53,9 +57,8 @@ export default function LoginPage() {
         Your browser does not support the video tag.
       </video>
 
-      {/* Form Content */}
-      <div
-        className="relative z-10 bg-black/30 backdrop-blur-md border border-transparent 
+      {/* Login Form */}
+      <div className="relative z-10 bg-black/30 backdrop-blur-md border border-transparent 
         rounded-2xl shadow-xl hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] hover:border-white 
         transition-all duration-500 ease-in-out transform hover:scale-105
         w-[95%] sm:w-[90%] md:max-w-md
@@ -64,6 +67,7 @@ export default function LoginPage() {
         <h2 className="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Login</h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Email Input */}
           <div className="mb-3 sm:mb-4">
             <label htmlFor="email" className="block text-xs sm:text-sm font-medium mb-1">Email</label>
             <input
@@ -77,6 +81,7 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* Password Input */}
           <div className="mb-4 sm:mb-6 relative">
             <label htmlFor="password" className="block text-xs sm:text-sm font-medium mb-1">Password</label>
             <input
@@ -98,6 +103,7 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-yellow-400 text-black font-semibold py-2.5 sm:py-3 text-sm rounded-lg hover:bg-yellow-300 transition-all duration-300"
@@ -106,6 +112,7 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Register Redirect */}
         <p className="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-white">
           Not registered?{' '}
           <Link href="/register" className="text-yellow-400 hover:underline">

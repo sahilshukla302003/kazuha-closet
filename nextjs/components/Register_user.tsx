@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { userRegister } from '@/utils/api/userUtils';
 import { Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
+
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -25,15 +27,18 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     try {
       const res = await userRegister(form);
+      localStorage.setItem('token',res.token);
       if (res) {
-        alert('Registration successful!');
-        router.push('/');
+        toast.success('Registration successful!');
+        setTimeout(() => {
+          router.push('/');
+        }, 1500);
+        
       } else {
-        alert('Registration failed');
+        toast.error('Registration failed check your details');
       }
     } catch (err) {
       console.error(err);
-      alert('Something went wrong!');
     }
   };
 

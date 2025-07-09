@@ -27,42 +27,48 @@ export default function Navbar() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+useEffect(() => {
+  setMounted(true);
 
-  useEffect(() => {
-    setMounted(true);
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 20);
+  };
 
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
+    }
+  };
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
+  // Attach listeners
+  window.addEventListener("scroll", handleScroll);
+  document.addEventListener("mousedown", handleClickOutside);
+
+  const token = localStorage.getItem("token");
+  if (token) {
+    const fetchUser = async () => {
+      try {
+        const user = await getUser();
+        setUserData(user);
+        setFirstLetter(user.first_name?.[0]?.toUpperCase() || null);
+      } catch (err) {
+        console.error("Error fetching user:", err);
       }
     };
+    fetchUser();
+  }
 
-    const userId = localStorage.getItem('userid');
-    if (userId) {
-      const fetchUser = async () => {
-        try {
-          const user = await getUser(userId);
-          setUserData(user);
-          setFirstLetter(user.first_name?.[0]?.toUpperCase() || null);
-        } catch (err) {
-          console.error('Error fetching user:', err);
-        }
-      };
-      fetchUser();
-    }
+  // Cleanup
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
-    window.addEventListener('scroll', handleScroll);
-    document.addEventListener('mousedown', handleClickOutside);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const handleLogout = () => {
     localStorage.clear();

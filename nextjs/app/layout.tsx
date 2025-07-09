@@ -3,7 +3,7 @@
 import './globals.css';
 import 'aos/dist/aos.css';
 import { Poppins } from 'next/font/google';
-import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
 import FloatingLauncher from '@/components/Landingpage/FloatingLauncher'; // 👈 NEW
@@ -46,7 +46,38 @@ export default function RootLayout({
             </>
           )}
         </main>
+      
+<Toaster
+  position="top-right"
+  toastOptions={{
+    duration: 3000,
+    style: {
+      background: '#1f1f1f',
+      color: '#facc15',
+      fontWeight: 'bold',
+      borderRadius: '10px',
+      padding: '12px 16px',
+      boxShadow: '0 0 10px rgba(255, 255, 255, 0.15)',
+      border: '1px solid #facc15',
+    },
+    success: {
+      iconTheme: {
+        primary: '#22c55e',
+        secondary: '#1f1f1f',
+      },
+    },
+    error: {
+      iconTheme: {
+        primary: '#f87171',
+        secondary: '#1f1f1f',
+      },
+    },
+  }}
+/>
+
       </body>
     </html>
   );
 }
+
+
