@@ -10,8 +10,7 @@ export const addProducttoCart = async (data: object) => {
   return res.data;
 };
 
-export const getUserCart = async (userId: string) => {
-  const res = await userConnection.get(`/api/cart/${userId}`);
-  console.log(res.data)
+export const getUserCart = async () => {
+  const res = await userConnection.get(`/api/cart/`);
   return res.data;
 };

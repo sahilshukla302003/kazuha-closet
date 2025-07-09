@@ -30,11 +30,11 @@ export default function CartPage() {
 
   useEffect(() => {
     const fetchCartData = async () => {
-      const userId = localStorage.getItem("userid");
-      if (!userId) return;
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
       try {
-        const cartData = await getUserCart(userId);
+        const cartData = await getUserCart();
         const cart = cartData.cart;
 
         const cartItems = await Promise.all(
