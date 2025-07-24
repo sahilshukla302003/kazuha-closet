@@ -3,7 +3,8 @@
 import './globals.css';
 import 'aos/dist/aos.css';
 import { Poppins } from 'next/font/google';
-import { Toaster } from 'react-hot-toast';import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
 import FloatingLauncher from '@/components/Landingpage/FloatingLauncher'; // 👈 NEW

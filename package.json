@@ -92,6 +92,7 @@
     "postcss-selector-parser": "^7.1.0",
     "postcss-value-parser": "^4.2.0",
     "pretty-hrtime": "^1.0.3",
+    "react-hot-toast": "^2.5.2",
     "read-cache": "^1.0.0",
     "readdirp": "^3.6.0",
     "require-directory": "^2.1.1",
