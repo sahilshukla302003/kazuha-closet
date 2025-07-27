@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "./Landingpage/Navbar";
-import { getUserCart, getProductDetails } from "@/utils/api/productUtils";
+import {
+  getUserCart,
+  getProductDetails,
+  removeFromCart,
+} from "@/utils/api/productUtils";
 
 type Product = {
   id: string;
@@ -56,13 +60,31 @@ export default function CartPage() {
     fetchCartData();
   }, []);
 
-  const cleanPrice = (price: string) => parseFloat(price.replace(/[^0-9.]/g, ""));
+  const cleanPrice = (price: string) =>
+    parseFloat(price.replace(/[^0-9.]/g, ""));
 
   const total = cartProducts.reduce((acc, item) => {
     const price = cleanPrice(item.price);
     const qty = item.quantity || 0;
     return acc + price * qty;
   }, 0);
+
+  const handleRemoveItem = async (productId: string) => {
+    // Optimistic UI update
+    setCartProducts((prev) => prev.filter((item) => item.id !== productId));
+
+    try {
+      await removeFromCart(productId);
+      console.log(`Item ${productId} removed from backend cart`);
+    } catch (error) {
+      console.error("Failed to remove item from backend cart:", error);
+    }
+
+    // Optional localStorage sync (if you're using it somewhere else)
+    const updatedCart = JSON.parse(localStorage.getItem("cart") || "{}");
+    delete updatedCart[productId];
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
 
   return (
     <main className="bg-black text-white min-h-screen px-4 py-6">
@@ -88,7 +110,9 @@ export default function CartPage() {
           </div>
         ) : (
           <>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-10 text-center">YOUR CART</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-10 text-center">
+              YOUR CART
+            </h1>
 
             {cartProducts.map((item) => (
               <div
@@ -106,22 +130,39 @@ export default function CartPage() {
 
                 {/* Details */}
                 <div className="flex-1 space-y-1">
-                  <h2 className="text-base sm:text-lg md:text-2xl font-semibold">{item.name}</h2>
+                  <h2 className="text-base sm:text-lg md:text-2xl font-semibold">
+                    {item.name}
+                  </h2>
 
-                  {/* Removed description in mobile */}
                   <p className="hidden sm:block text-gray-400 text-sm italic truncate max-w-[240px]">
                     {item.description || "No description available."}
                   </p>
 
-                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Price: ₹{cleanPrice(item.price)}</p>
-                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Quantity: {item.quantity}</p>
-                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">Size: {item.size}</p>
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">
+                    Price: ₹{cleanPrice(item.price)}
+                  </p>
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">
+                    Quantity: {item.quantity}
+                  </p>
+                  <p className="text-gray-300 text-xs sm:text-sm md:text-base">
+                    Size: {item.size}
+                  </p>
                   <p className="text-white font-semibold text-sm sm:text-base">
                     Subtotal: ₹{cleanPrice(item.price) * item.quantity}
                   </p>
-                  <button className="mt-2 bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-gray-200">
-                    Buy Now
-                  </button>
+
+                  {/* Buttons */}
+                  <div className="mt-2 flex gap-2 flex-wrap">
+                    <button className="bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-gray-200">
+                      Buy Now
+                    </button>
+                    <button
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="bg-red-600 text-white text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-red-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

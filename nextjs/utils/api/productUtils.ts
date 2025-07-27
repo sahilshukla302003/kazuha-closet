@@ -14,3 +14,10 @@ export const getUserCart = async () => {
   const res = await userConnection.get(`/api/cart/`);
   return res.data;
 };
+
+
+export const removeFromCart = async (productId: string) => {
+  console.log(productId);
+  const res = await userConnection.delete(`/api/cart/remove/${productId}/`);
+  return res.data;
+};
