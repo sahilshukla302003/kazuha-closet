@@ -183,3 +183,32 @@ class UpdateProfileView(APIView):
             return Response({"message": "Profile updated successfully"}, status=200)
 
         return Response(serializer.errors, status=400)
+    
+class Remove_Item(APIView):
+    def delete(self, request, id):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=401)
+
+        token = auth_header.split(" ")[1]
+        user_id = decode_jwt(token)
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=401)
+
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+
+        cart = user.get("cart", {})
+        if id not in cart:
+            return Response({"error": "Item not found in cart"}, status=404)
+
+        users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$unset": {f"cart.{id}": ""}}
+        )
+        return Response({"message": "Item removed from cart successfully"}, status=200)
+    
+
+
+
