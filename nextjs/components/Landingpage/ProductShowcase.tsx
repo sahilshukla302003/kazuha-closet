@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type Product = {
-  id: number;
+  id: string; // Changed from number to string to match your product system
   name: string;
   price: string;
   type: "video" | "image";
@@ -15,42 +16,41 @@ type Product = {
 
 const products: Product[] = [
   {
-    id: 1,
-    name: "Naruto Tee",
-    subtitle: "Sage Mode Series",
-    price: "₹599",
+    id: "giyu-tee-001", // Using the same IDs as in All_product.tsx
+    name: "Giyu Tee",
+    subtitle: "Water Hashira",
+    price: "₹449",
     type: "image",
     media: "Productimage/GIYU/1.png",
-    description: "Premium quality t-shirt featuring Naruto in Sage Mode. Made with 100% cotton for maximum comfort.",
+    description: "Stylish Giyu Tomioka T-shirt",
     rating: 4.8
   },
   {
-    id: 2,
-    name: "Luffy Tee",
-    subtitle: "Straw Hat Pirates",
-    price: "₹649",
+    id: "itachi-tee-001", // Using the same IDs as in All_product.tsx
+    name: "Itachi Tee",
+    subtitle: "You are already under my Genjutsu",
+    price: "₹429",
     type: "image", 
     media: "Productimage/ITACHI/1.png",
-    description: "Join the Straw Hat crew with this awesome Luffy design. High-quality print on soft cotton fabric.",
+    description: "Elegant Itachi Uchiha design tee",
     rating: 4.9
   },
   {
-    id: 3,
-    name: "Sasuke Tee",
-    subtitle: "Uchiha Legacy",
-    price: "₹699",
+    id: "rengoku-tee-001", // Using the same IDs as in All_product.tsx
+    name: "Rengoku Tee",
+    subtitle: "Flame Hashira",
+    price: "₹459",
     type: "image",
     media: "Productimage/RENGOKU/1.png",
-    description: "Embrace the power of the Uchiha clan with this premium Sasuke t-shirt. Perfect for anime fans.",
+    description: "Fiery Rengoku Flame Hashira tee",
     rating: 4.7
   },
 ];
 
-
-
 const ProductShowcase = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const observerRef = useRef<(HTMLVideoElement | null)[]>([]);
+  const router = useRouter(); // Added router for navigation
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -71,6 +71,23 @@ const ProductShowcase = () => {
 
     return () => observer.disconnect();
   }, []);
+
+  // Navigation function - same as in All_product.tsx
+  const navigateToProduct = (productId: string) => {
+    localStorage.setItem("productid", productId);
+    router.push(`/product_page/`);
+  };
+
+  // Handle card click
+  const handleCardClick = (productId: string) => {
+    navigateToProduct(productId);
+  };
+
+  // Handle quick view click
+  const handleQuickView = (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation(); // Prevent event bubbling if needed
+    navigateToProduct(productId);
+  };
 
   const nextProduct = () => {
     setCurrentIndex((prev) => (prev + 1) % products.length);
@@ -96,14 +113,6 @@ const ProductShowcase = () => {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
-      <div className="absolute top-4 right-4 z-20">
-        <Link href="/allproducts">
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-3 text-xs sm:text-sm rounded-full shadow-lg transition-transform duration-300 hover:scale-105">
-            View All
-          </button>
-        </Link>
-      </div>
-
       <button
         onClick={prevProduct}
         className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 md:hidden"
@@ -143,9 +152,13 @@ const ProductShowcase = () => {
               </p>
             </div>
 
+            {/* Mobile View */}
             <div className="md:hidden">
               <div className="flex justify-center">
-                <div className="w-56 xs:w-60 sm:w-72 transition-all duration-500 hover:-translate-y-8">
+                <div 
+                  className="w-56 xs:w-60 sm:w-72 transition-all duration-500 hover:-translate-y-8 cursor-pointer"
+                  onClick={() => handleCardClick(products[currentIndex].id)}
+                >
                   <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-500 overflow-hidden">
                     
                     <div className="relative h-48 sm:h-56 overflow-hidden">
@@ -206,7 +219,10 @@ const ProductShowcase = () => {
                       </div>
 
                       <div className="flex justify-center">
-                        <button className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                        <button 
+                          onClick={(e) => handleQuickView(e, products[currentIndex].id)}
+                          className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
+                        >
                           <span className="text-sm">Quick View</span>
                         </button>
                       </div>
@@ -216,14 +232,15 @@ const ProductShowcase = () => {
               </div>
             </div>
 
-            {/* ✅ Desktop View Cards - Larger with more spacing */}
+            {/* Desktop View Cards */}
             <div className="hidden md:flex flex-1 items-center justify-center h-full">
               <div className="overflow-x-auto pb-4 scrollbar-hide flex items-center">
                 <div className="flex gap-8 px-4 justify-center items-center min-h-full" style={{ minWidth: "max-content" }}>
                   {products.map((product, index) => (
                     <div
                       key={product.id}
-                      className="flex-shrink-0 w-80 transition-all duration-500 hover:scale-105"
+                      className="flex-shrink-0 w-80 transition-all duration-500 hover:scale-105 cursor-pointer"
+                      onClick={() => handleCardClick(product.id)}
                     >
                       <div className="bg-black/40 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-500 overflow-hidden">
                         <div className="relative h-60 overflow-hidden">
@@ -288,7 +305,10 @@ const ProductShowcase = () => {
                           </div>
 
                           <div className="flex justify-center">
-                            <button className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                            <button 
+                              onClick={(e) => handleQuickView(e, product.id)}
+                              className="px-6 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-black font-bold rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
+                            >
                               <span className="text-sm">Quick View</span>
                             </button>
                           </div>
@@ -313,9 +333,70 @@ const ProductShowcase = () => {
                 />
               ))}
             </div>
+
+            {/* Rotating Border View All Products button at the bottom */}
+            <div className="flex justify-center mt-6 md:mt-6">
+              <Link href="/allproducts">
+                <button className="border-btn-small relative bg-gradient-to-r from-orange-400 to-orange-600 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-full cursor-pointer overflow-hidden transition-all duration-300 hover:scale-105 text-sm md:text-base shadow-lg hover:shadow-xl z-10">
+                  <span className="relative z-20">View All Products</span>
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* CSS for Rotating Border Button */}
+      <style jsx>{`
+        .border-btn-small {
+          position: relative;
+          background: transparent;
+          border: 2px solid transparent;
+          background-clip: padding-box;
+          color: white;
+          padding: 8px 20px;
+          border-radius: 30px;
+          font-weight: bold;
+          cursor: pointer;
+          overflow: hidden;
+        }
+        
+        @media (min-width: 768px) {
+          .border-btn-small {
+            padding: 12px 24px;
+          }
+        }
+        
+        .border-btn-small::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(45deg, #ffd700, #ff8c00, #ff4500, #8b0000);
+          border-radius: 30px;
+          z-index: -1;
+          animation: rotateBorder 3s linear infinite;
+        }
+        
+        .border-btn-small::after {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          right: 2px;
+          bottom: 2px;
+          background: #1a1a1a;
+          border-radius: 28px;
+          z-index: -1;
+        }
+        
+        @keyframes rotateBorder {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
