@@ -25,4 +25,3 @@ export const updateUser=async( data:any)=>{
 
 
 
-
