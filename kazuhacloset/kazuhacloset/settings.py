@@ -1,41 +1,37 @@
-from pathlib import Path
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+import mongoengine
 
-# Load environment variables from .env file if available
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ModuleNotFoundError:
-    pass
+# Load environment variables from .env file
+load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Environment Variables
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# Installed Apps
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+
+# Application definition
 INSTALLED_APPS = [
-    'product',
-    'home',
-    'rest_framework',
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'home',
+    'product',
 ]
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all only in debug
-
-# Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -45,10 +41,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URL Configuration
 ROOT_URLCONF = 'kazuhacloset.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,44 +61,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kazuhacloset.wsgi.application'
 
-# MongoDB Setup
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'kazuhacloset',  # Or get from env if dynamic
-        'CLIENT': {
-            'host': os.getenv('MONGO_URI'),
-            'authSource': 'admin'
-        }
-    }
-}
 
-# Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# MongoDB Connection using MongoEngine
+MONGO_URI = os.getenv("MONGO_URI")
+mongoengine.connect(host=MONGO_URI)
 
-# Time and Language
+
+# Password validation (not used if no Django User model)
+AUTH_PASSWORD_VALIDATORS = []
+
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JS, etc.)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
 
-# Default primary key type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# JWT Custom settings
+JWT_SECRET = os.getenv("JWT_SECRET")
+JWT_EXPIRY = int(os.getenv("JWT_EXPIRY", 3600))
