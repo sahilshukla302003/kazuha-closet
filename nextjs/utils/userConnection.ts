@@ -2,7 +2,7 @@ import axios  from "axios";
 
 
 const userConnection=axios.create({
-    baseURL: 'https://kazuha-backend.onrender.com' 
+    baseURL: 'https://kazuha-closet-ubzf.onrender.com' 
 });
 
 userConnection.interceptors.request.use((config) => {

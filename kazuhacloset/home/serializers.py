@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 class RegisterSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
     email = serializers.EmailField()
-    phone = serializers.CharField(max_length=15)
+    phone = serializers.CharField()
     password = serializers.CharField(write_only=True)  # We don't want to return the password
 
 class AddToCartSerializer(serializers.Serializer):
