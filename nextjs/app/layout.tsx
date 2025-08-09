@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
-import FloatingLauncher from '@/components/Landingpage/FloatingLauncher'; // 👈 NEW
+import FloatingLauncher from '@/components/Landingpage/FloatingLauncher';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -43,42 +43,38 @@ export default function RootLayout({
           ) : (
             <>
               {children}
-              <FloatingLauncher /> {/* 👈 Bold floating button always visible */}
+              <FloatingLauncher />
             </>
           )}
         </main>
-      
-<Toaster
-  position="top-right"
-  toastOptions={{
-    duration: 3000,
-    style: {
-      background: '#1f1f1f',
-      color: '#facc15',
-      fontWeight: 'bold',
-      borderRadius: '10px',
-      padding: '12px 16px',
-      boxShadow: '0 0 10px rgba(255, 255, 255, 0.15)',
-      border: '1px solid #facc15',
-    },
-    success: {
-      iconTheme: {
-        primary: '#22c55e',
-        secondary: '#1f1f1f',
-      },
-    },
-    error: {
-      iconTheme: {
-        primary: '#f87171',
-        secondary: '#1f1f1f',
-      },
-    },
-  }}
-/>
 
+        {/* 🔥 Custom Toaster Styling with Avatar Icons */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: 'custom-toast',
+            duration: 3500,
+            success: {
+              icon: (
+                <img
+                  src="/pass.png"
+                  alt="Success"
+                  className="w-8 h-8 rounded-full toast-avatar-glow"
+                />
+              ),
+            },
+            error: {
+              icon: (
+                <img
+                  src="/fail.png"
+                  alt="Error"
+                  className="w-8 h-8 rounded-full toast-avatar-glow"
+                />
+              ),
+            },
+          }}
+        />
       </body>
     </html>
   );
 }
-
-

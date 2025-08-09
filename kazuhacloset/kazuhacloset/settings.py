@@ -1,26 +1,31 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
-# Load environment variables from .env file if available
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ModuleNotFoundError:
-    pass
+# Load environment variables from .env
+load_dotenv()
+
+# Fetch MongoDB URI from environment variables
+MONGO_URI = os.getenv('MONGO_URI')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Environment Variables
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-n=n!%__nrvbie!%e3z&bmxj#=^t71u7117ggq3u)$a^@ubo63%'
 
-# Installed Apps
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = [  "kazuha-closet-ubzf.onrender.com",
+                  "localhost"
+                 ]
+
+
 INSTALLED_APPS = [
     'product',
-    'home',
     'rest_framework',
+    'home',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,10 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all only in debug
+CORS_ALLOW_ALL_ORIGINS = True
 
-# Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -45,10 +48,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URL Configuration
 ROOT_URLCONF = 'kazuhacloset.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,17 +68,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kazuhacloset.wsgi.application'
 
-# MongoDB Setup
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'kazuhacloset',  # Or get from env if dynamic
-        'CLIENT': {
-            'host': os.getenv('MONGO_URI'),
-            'authSource': 'admin'
-        }
-    }
-}
+# Authentication settings for MongoDB (you can ignore this if not using Django's ORM)
+# AUTH_USER_MODEL = 'home.User'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -95,16 +87,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Time and Language
+# Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JS, etc.)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
 
-# Default primary key type
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
