@@ -1,3 +1,6 @@
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,168 +8,207 @@ from .serializers import (
     RegisterSerializer, LoginSerializer, ProfileSerializer,
     UpdateProfileSerializer, AddToCartSerializer
 )
-from django.contrib.auth.hashers import make_password, check_password
-from datetime import datetime, timedelta
+from django.contrib.auth.hashers import make_password, check_password  
+from bson.objectid import ObjectId
 import jwt
-import os
-from dotenv import load_dotenv
-from .models import User
-from mongoengine.errors import NotUniqueError
+from datetime import datetime, timedelta
 
+# Load environment variables from .env
 load_dotenv()
+client = MongoClient(os.getenv('MONGO_URI'))
+db = client["LoginData"]
+users_collection = db["Users"]
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"
 
-
-
-
-
-# ---------------------- JWT UTILITY ----------------------
+# Utility to create JWT
 def create_jwt(user_id):
     payload = {
         "user_id": str(user_id),
         "exp": datetime.utcnow() + timedelta(days=1)
     }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return token
 
-
+# Utility to decode JWT and return user_id
 def decode_jwt(token):
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return payload["user_id"]
-    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
         return None
 
 
-def get_user_from_token(request):
-    auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
-        return None, Response({"error": "Authorization token missing"}, status=401)
-
-    token = auth_header.split(" ")[1]
-    user_id = decode_jwt(token)
-    if not user_id:
-        return None, Response({"error": "Invalid or expired token"}, status=401)
-
-    try:
-        user = User.objects.get(id=user_id)
-        return user, None
-    except User.DoesNotExist:
-        return None, Response({"error": "User not found"}, status=404)
-
-
-# ---------------------- VIEWS ----------------------
 class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            try:
-                user_data = serializer.validated_data
-                
-                user = User(
-                    email=user_data['email'],
-                    password=make_password(user_data['password']),
-                    first_name=user_data.get('first_name', ''),
-                    last_name=user_data.get('last_name', ''),
-                    phone=user_data.get('phone', ''),
-                    cart={}
-                )
-                user.save()
-                token = create_jwt(user.id)
-                return Response({"message": "User registered successfully", "token": token}, status=201)
-            except NotUniqueError:
-                return Response({"error": "Email already exists"}, status=400)
-        else:
-            # 👇 Log the serializer error
-            return Response({"errors": serializer.errors}, status=400)
+            user_data = serializer.validated_data
+            user_data['password'] = make_password(user_data['password'])
+            user_data['cart'] = {}
+            result = users_collection.insert_one(user_data)
+            user_id=result.inserted_id
+            token=create_jwt(user_id)
+            return Response({"message": "User registered successfully", "token":token},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            try:
-                user = User.objects.get(email=serializer.validated_data['email'])
-                if check_password(serializer.validated_data['password'], user.password):
-                    token = create_jwt(user.id)
-                    return Response({
-                        "message": "Login successful",
-                        "token": token,
-                        "first_name": user.first_name,
-                        "id": str(user.id)
-                    }, status=200)
-            except User.DoesNotExist:
-                pass
-            return Response({"error": "Invalid credentials"}, status=401)
-        return Response(serializer.errors, status=400)
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+
+            user = users_collection.find_one({"email": email})
+            if user and check_password(password, user['password']):
+                token = create_jwt(user["_id"])
+                return Response({
+                    "message": "Login successful",
+                    "token": token,
+                    "first_name": user.get("first_name", ""),
+                    "id": str(user.get("_id"))
+                }, status=status.HTTP_200_OK)
+
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddToCartView(APIView):
     def post(self, request):
-        user, error = get_user_from_token(request)
-        if error:
-            return error
-
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=401)
+        token = auth_header.split(" ")[1]
+        user_id=decode_jwt(token)
+        print(user_id)
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=401)
         serializer = AddToCartSerializer(data=request.data)
         if serializer.is_valid():
-            product_id = serializer.validated_data['product_id']
-            cart_value = [serializer.validated_data['quantity'], serializer.validated_data['size']]
-            user.cart[product_id] = cart_value
-            user.save()
-            return Response({"message": "Item added to cart"}, status=200)
+            data = serializer.validated_data
+            product_id = data["product_id"]
+            quantity = data["quantity"]
+            size = data["size"]
+            cart_key = product_id
+            cart_value = [quantity, size]
+            result = users_collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {f"cart.{cart_key}": cart_value}}
+            )
+
+            if result.modified_count == 1:
+                return Response({"message": "Item added to cart"}, status=200)
+            else:
+                return Response({"error": "User not found or cart not updated"}, status=404)
+
         return Response(serializer.errors, status=400)
 
 
 class CartView(APIView):
     def get(self, request):
-        user, error = get_user_from_token(request)
-        if error:
-            return error
-        return Response({"cart": user.cart}, status=200)
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=401)
+
+        token = auth_header.split(" ")[1]
+        user_id = decode_jwt(token)
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=401)
+
+        user = users_collection.find_one({"_id": ObjectId(user_id)}, {"cart": 1})
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+
+        return Response({"cart": user.get("cart", {})}, status=200)
 
 
 class UserProfileView(APIView):
     def get(self, request):
-        user, error = get_user_from_token(request)
-        if error:
-            return error
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=status.HTTP_401_UNAUTHORIZED)
 
+        token = auth_header.split(" ")[1]
+        user_id = decode_jwt(token)
+
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # 4. Prepare and return serialized user data
         user_data = {
-            "id": str(user.id),
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "phone": user.phone
+            "id": str(user["_id"]),
+            "email": user.get("email", ""),
+            "first_name": user.get("first_name", ""),
+            "last_name": user.get("last_name", ""),
+            "phone": user.get("phone", "")
         }
+
         serializer = ProfileSerializer(user_data)
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UpdateProfileView(APIView):
     def put(self, request):
-        user, error = get_user_from_token(request)
-        if error:
-            return error
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=401)
+
+        token = auth_header.split(" ")[1]
+        user_id = decode_jwt(token)
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=401)
 
         serializer = UpdateProfileSerializer(data=request.data)
         if serializer.is_valid():
-            for field, value in serializer.validated_data.items():
-                setattr(user, field, value)
-            user.save()
+            update_data = serializer.validated_data
+
+            user = users_collection.find_one({"_id": ObjectId(user_id)})
+            if not user:
+                return Response({"error": "User not found"}, status=404)
+
+            users_collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": update_data}
+            )
+
             return Response({"message": "Profile updated successfully"}, status=200)
+
         return Response(serializer.errors, status=400)
-
-
+    
 class Remove_Item(APIView):
     def delete(self, request, id):
-        user, error = get_user_from_token(request)
-        if error:
-            return error
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return Response({"error": "Authorization token missing"}, status=401)
 
-        if id in user.cart:
-            del user.cart[id]
-            user.save()
-            return Response({"message": "Item removed from cart successfully"}, status=200)
-        else:
+        token = auth_header.split(" ")[1]
+        user_id = decode_jwt(token)
+        if not user_id:
+            return Response({"error": "Invalid or expired token"}, status=401)
+
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+
+        cart = user.get("cart", {})
+        if id not in cart:
             return Response({"error": "Item not found in cart"}, status=404)
+
+        users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$unset": {f"cart.{id}": ""}}
+        )
+        return Response({"message": "Item removed from cart successfully"}, status=200)
+    
+
+
+
