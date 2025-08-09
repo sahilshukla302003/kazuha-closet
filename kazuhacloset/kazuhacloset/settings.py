@@ -1,39 +1,44 @@
-import os
 from pathlib import Path
+import os
 from dotenv import load_dotenv
-import mongoengine
 
-# Load environment variables from .env file
+# Load environment variables from .env
 load_dotenv()
 
-# Base directory
+# Fetch MongoDB URI from environment variables
+MONGO_URI = os.getenv('MONGO_URI')
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = 'django-insecure-n=n!%__nrvbie!%e3z&bmxj#=^t71u7117ggq3u)$a^@ubo63%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = [  "kazuha-closet-ubzf.onrender.com",
                   "localhost"
                  ]
 
 
-# Application definition
 INSTALLED_APPS = [
+    'product',
+    'rest_framework',
+    'home',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'home',
-    'product',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,28 +68,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kazuhacloset.wsgi.application'
 
+# Authentication settings for MongoDB (you can ignore this if not using Django's ORM)
+# AUTH_USER_MODEL = 'home.User'
 
-# MongoDB Connection using MongoEngine
-MONGO_URI = os.getenv("MONGO_URI")
-mongoengine.connect(host=MONGO_URI)
-
-
-# Password validation (not used if no Django User model)
-AUTH_PASSWORD_VALIDATORS = []
+# Password validation
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'UTC'
+
 USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# JWT Custom settings
-JWT_SECRET = os.getenv("JWT_SECRET")
-JWT_EXPIRY = int(os.getenv("JWT_EXPIRY", 3600))
