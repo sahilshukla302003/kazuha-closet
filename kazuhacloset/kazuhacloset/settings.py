@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-n=n!%__nrvbie!%e3z&bmxj#=^t71u7117ggq3u)$a^@ubo63%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [  "kazuha-closet-ubzf.onrender.com",
+ALLOWED_HOSTS = [  "kazuha-closet-ecjd.onrender.com",
                   "localhost"
                  ]
 
