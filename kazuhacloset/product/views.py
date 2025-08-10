@@ -1,14 +1,26 @@
+from django.shortcuts import render
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Product
-from mongoengine.errors import DoesNotExist
+
+
+
+load_dotenv()
+client = MongoClient(os.getenv('MONGO_URI'))
+db=client["Product"]
+product_collection = db["product_id"]
+
 
 class ProductDetailView(APIView):
     def get(self, request, id):
         try:
-            product = Product.objects.get(id=str(id))
-            return Response(product.to_mongo().to_dict(), status=200)
-        except DoesNotExist:
-            return Response({"error": "Product not found"}, status=404)
+            product = product_collection.find_one({"id": str(id)})
+            if not product:
+                return Response({"error": "Product not found"}, status=404)
+            product["_id"] = str(product["_id"])
+            return Response(product, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
