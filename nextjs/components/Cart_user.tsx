@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "./Landingpage/Navbar";
+import { useRouter } from "next/navigation";
 import {
   getUserCart,
   getProductDetails,
@@ -30,6 +31,7 @@ type CartItem = Product & {
 };
 
 export default function CartPage() {
+  const router = useRouter();
   const [cartProducts, setCartProducts] = useState<CartItem[]>([]);
 
   useEffect(() => {
@@ -153,16 +155,29 @@ export default function CartPage() {
 
                   {/* Buttons */}
                   <div className="mt-2 flex gap-2 flex-wrap">
-                    <button className="bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-gray-200">
-                      Buy Now
-                    </button>
-                    <button
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="bg-red-600 text-white text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-red-700"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                      <button
+                          onClick={() => {
+                            const productToBuy = {
+                              ...item,
+                              quantity: item.quantity,
+                              size: item.size,
+                            };
+                            localStorage.setItem("checkoutItems", JSON.stringify([productToBuy]));
+                            // no need to use ?buyNow anymore
+                            router.push("/order-summary");
+                          }}
+                          className="bg-white text-black text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-gray-200"
+                        >
+                          Buy Now
+                        </button>
+
+                      <button
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="bg-red-600 text-white text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1 rounded hover:bg-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
                 </div>
               </div>
             ))}
@@ -171,7 +186,14 @@ export default function CartPage() {
               <h3 className="text-lg sm:text-2xl font-bold text-white mb-4 md:mb-0">
                 Total: <span className="text-yellow-400">₹{total}</span>
               </h3>
-              <button className="bg-yellow-400 text-black font-bold px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-yellow-500 transition text-xs sm:text-base">
+
+              <button
+                onClick={() => {
+                  localStorage.setItem("checkoutItems", JSON.stringify(cartProducts));
+                  router.push("/order-summary");
+                }}
+                className="bg-yellow-400 text-black font-bold px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-yellow-500 transition text-xs sm:text-base"
+              >
                 Proceed to Checkout
               </button>
             </div>
