@@ -54,12 +54,12 @@ html {
 
 /* Hover effect for "50% OFF" with a more subtle color */
 .group-hover\:text-indigo-600:hover {
-  text-shadow: 0 0 8px #ff8c00, 0 0 16px #ffa500, 0 0 24px #ffb347; /* A more subtle indigo color */
+  text-shadow: 0 0 8px #ff8c00, 0 0 16px #ffa500, 0 0 24px #ffb347;
 }
 
 /* Group hover scale effect */
 .group-hover\:scale-110:hover {
-  transform: scale(1.05); /* Reduced scale effect for better performance */
+  transform: scale(1.05);
 }
 
 /* Softer drop-shadow */
@@ -73,7 +73,6 @@ html {
 
 /* Banner images css -----------------------------------------------------------------------------------------------------------------------*/
 
-/* Keyframe for slide-up and fade-in animation */
 @keyframes slideUpFade {
   0% {
     opacity: 0;
@@ -85,26 +84,22 @@ html {
   }
 }
 
-/* Animation class for fade-in and slide-up */
 .animate-slideUpFade {
   animation: slideUpFade 1.5s ease-out;
 }
 
-/* Hover effect to scale images */
 .img-hover-scale {
-  transition: transform 0.3s ease-in-out; /* Smooth transition */
+  transition: transform 0.3s ease-in-out;
 }
 
 .img-hover-scale:hover {
-  transform: scale(1.05); /* Slight scale effect */
+  transform: scale(1.05);
 }
 
-/* Optional: Smooth transition for scaling */
 img {
   transition: transform 0.3s ease-in-out;
 }
 
-/* Prevent jittery scaling */
 img, .img-hover-scale {
   will-change: transform;
 }
@@ -138,4 +133,23 @@ img, .img-hover-scale {
   .animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
   .animate-float { animation: float 3s ease-in-out infinite; }
   .animate-fade-in-slow { animation: fade-in 2s ease-out forwards; }
+}
+
+/* Toast Custom Styling -----------------------------------------------------------------------------------------------------------------------*/
+.custom-toast {
+  background: linear-gradient(to right, #3e3e3e, #7a7a7a);
+  color: #000;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Optional glowing border around image */
+.toast-avatar-glow {
+  box-shadow: 0 0 8px #facc15, 0 0 16px #fde68a;
+  border-radius: 50%;
 }

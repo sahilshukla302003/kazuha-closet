@@ -7,7 +7,6 @@ import { userRegister } from '@/utils/api/userUtils';
 import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -27,18 +26,19 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     try {
       const res = await userRegister(form);
-      localStorage.setItem('token',res.token);
-      if (res) {
+
+      if (res && res.token) {
+        localStorage.setItem('token', res.token);
         toast.success('Registration successful!');
         setTimeout(() => {
           router.push('/');
         }, 1500);
-        
       } else {
-        toast.error('Registration failed check your details');
+        toast.error('Registration failed. Please check your details.');
       }
     } catch (err) {
       console.error(err);
+      toast.error('Something went wrong during registration!');
     }
   };
 
